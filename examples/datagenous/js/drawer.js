@@ -34,7 +34,7 @@ function prepare_mxgraph() {
   }
   // Register for handling updates
 
-  graph.getModel().addListener(mxEvent.CHANGE, graphUpdateHandler(sender, evt));
+  //graph.getModel().addListener(mxEvent.CHANGE, graphUpdateHandler(sender, evt));
 }
 function graphUpdateHandler() {
   var changes = evt.getProperty('edit').changes;
