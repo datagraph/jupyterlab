@@ -13,7 +13,7 @@ function prepare_mxgraph() {
 
   // Creates the graph inside the given container
   graph = new mxGraph(container);
-  graph.setAllowDanglingEdges(false);
+  //graph.setAllowDanglingEdges(false);
 
   // Enables rubberband selection
   //new mxRubberband(graph);
@@ -32,6 +32,21 @@ function prepare_mxgraph() {
     // Updates the display
     graph.getModel().endUpdate();
   }
+  // Register for handling updates
+
+  graph.getModel().addListener(mxEvent.CHANGE, graphUpdateHandler(sender, evt));
+}
+function graphUpdateHandler() {
+  var changes = evt.getProperty('edit').changes;
+  var nodes = [];
+  var codec = new mxCodec();
+
+  for (var i = 0; i < changes.length; i++) {
+    console.log(changes[i]);
+
+    nodes.push(codec.encode(changes[i]));
+  }
+  // do something with the nodes
 }
 
 function get_window_position_state(window_id) {
@@ -110,19 +125,6 @@ function drawline(window_1, window_2) {
     // Updates the display
     graph.getModel().endUpdate();
   }
-
-  /*
-  var newLine = document.createElementNS('http://www.w3.org/2000/svg','line');
-     newLine.setAttribute('id','line2');
-     newLine.setAttribute('x1','' + window_1_midpoint_x);
-     newLine.setAttribute('y1',''+  window_1_midpoint_y);
-     newLine.setAttribute('x2',''+  window_2_midpoint_x );
-     newLine.setAttribute('y2','' + window_2_midpoint_y);
-     newLine.setAttribute('style','stroke:rgb(0,0,0);stroke-width:1');
-
-     $("#canvas").append(newLine);*/
-  /*  var line = draw.line(window_1_midpoint_x, window_1_midpoint_y,
-                       window_2_midpoint_x, window_2_midpoint_y).stroke({ width: 1 })*/
 }
 // Every relatable element will have its vertexes
 
