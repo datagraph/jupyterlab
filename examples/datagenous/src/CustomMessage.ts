@@ -7,11 +7,13 @@ import { Message, ConflatableMessage } from '@phosphor/messaging';
 
 export class CustomMessage extends ConflatableMessage {
   private content: string;
-  private child_index: number;
-  constructor(child_index: number, msg: string) {
+  private child_id: string;
+  private child_type: string;
+  constructor(child_id: string, msg: string, widget_type: string) {
     super(msg);
     this.content = msg;
-    this.child_index = child_index;
+    this.child_id = child_index;
+    this.child_type = child_type;
   }
   public get_message() {
     return this.content;
