@@ -13,7 +13,7 @@ export class CustomMessage extends ConflatableMessage {
     super(msg);
     this.content = msg;
     this.child_id = child_id;
-    this.child_type = child_type;
+    this.child_type = widget_type;
   }
   public get_message() {
     return this.content;
