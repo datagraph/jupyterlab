@@ -23,14 +23,6 @@ export class Canvas extends Widget {
       this.node.children[0]
     )).onkeyup = this.send_message_custom.bind(this);*/
   }
-  // Simply using this.node, this in here is not this class, fails in bundling
-  send_message_custom(): any {
-    let msg = new CustomMessage(
-      this.child_id,
-      (<HTMLTextAreaElement>this.node.children[0]).value
-    );
-    MessageLoop.sendMessage(this.parent, msg);
-  }
 
   // Let's enjoy reverse engineering phosphor js people's code
   private createCanvasMenu(): MenuBar {
