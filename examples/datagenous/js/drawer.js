@@ -56,7 +56,7 @@ function get_window_position_state(window_id) {
   var window_width = $('#' + window_id)[0].style.width;
 
   console.log(window_left_pos);
-  drawline('test', 'test1');
+  //drawline('test', 'test1');
 }
 
 function remove_px(position_value) {

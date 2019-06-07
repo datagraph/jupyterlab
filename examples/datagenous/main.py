@@ -3,62 +3,61 @@
 run ``python main.py``.
 
 """
-import os
-from jinja2 import FileSystemLoader
-from notebook.base.handlers import IPythonHandler, FileFindHandler
-from notebook.notebookapp import NotebookApp
-from notebook.utils import url_path_join as ujoin
-from traitlets import Unicode
+"""
+ Will be object oriented in the future
+"""
+import logging
+import simplejson as json
+from functools import wraps
+from flask import Flask, request, jsonify, abort,send_from_directory,render_template
 
-HERE = os.path.dirname(__file__)
 
-class CanvasHandler(IPythonHandler):
+
+# Set logger
+logging.basicConfig(level=logging.INFO)
+LOGGER = logging.getLogger(__name__)
+HDLR = logging.FileHandler('DatagenousRouter.log')
+FORMATTER = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+HDLR.setFormatter(FORMATTER)
+LOGGER.addHandler(HDLR)
+
+app = Flask(__name__, static_url_path='/static')
+app.config['DEBUG'] = True
+
+
+def get_request_ip():
+    """ Required when dealing with NGINX servers, as environment
+        variable can be different for HTTP_X_FORWARDED_FOR behind
+        reverse proxy
     """
-    Modified module from Notebook to handle canvas
-    """
-
-    def get(self, notebook_path):
-        """Get the main page for the application's interface."""
-        # Options set here can be read with PageConfig.getOption
-        config_data = {
-            # Use camelCase here, since that's what the lab components expect
-            'baseUrl': self.base_url,
-            'token': self.settings['token'],
-            'notebookPath': notebook_path,
-            'bundleUrl': ujoin(self.base_url, 'build/'),
-            # FIXME: We perhaps may use it still 
-            'mathjaxUrl': "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js",
-            'mathjaxConfig': "TeX-AMS_CHTML-full,Safe"
-        }
-        return self.write(
-            self.render_template(
-                'index.html',
-                static=self.static_url,
-                base_url=self.base_url,
-                config_data=config_data
-            )
-        )
-
-    def get_template(self, name):
-        loader = FileSystemLoader(HERE)
-        return loader.load(self.settings['jinja2_env'], name)
+    if request.environ.get('HTTP_X_FORWARDED_FOR') is None:
+        return request.environ['REMOTE_ADDR']
+    else:
+        return request.environ['HTTP_X_FORWARDED_FOR']
 
 
-class ExampleApp(NotebookApp):
-     
-    default_url = Unicode('/dydracanvas/test-canvas')
+@app.route('/heartbeat', methods=['GET', 'POST'])
+def heart_beat():
+    """ Returns if server is alive  """
+    LOGGER.info("Received heartbeat check from " +  get_request_ip())
+    return "Canvas server is alive"
 
-    def init_webapp(self):
-        """initialize tornado webapp and httpserver.
-        """
-        super(ExampleApp, self).init_webapp()
-        default_handlers = [
-            (ujoin(self.base_url, r'dydracanvas/(.*)?'), CanvasHandler),
-            (ujoin(self.base_url, r"build/(.*)"), FileFindHandler,
-                {'path': os.path.join(HERE, 'build')})
-        ]
-        self.web_app.add_handlers('.*$', default_handlers)
+# Should now support both js and build static files
+@app.route('/js/<path:path>')
+def send_js(path):
+    return send_from_directory('js', path)
+
+@app.route('/build/<path:path>')
+def send_build(path):
+    return send_from_directory('build', path)
+
+
+@app.route('/canvas', methods=['GET'])
+def canvas():
+    """ Returns if server is alive  """
+    LOGGER.info("Received heartbeat check from " +  get_request_ip())
+    return app.send_static_file('index.html')
 
 
 if __name__ == '__main__':
-    ExampleApp.launch_instance()
+    app.run(host="0.0.0.0", port=5001)

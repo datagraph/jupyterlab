@@ -423,7 +423,7 @@ if (typeof mxResourceExtension == 'undefined') {
 if (typeof mxLoadStylesheets == 'undefined') {
   mxLoadStylesheets = true;
 }
-mxBasePath = 'dydracanvas';
+mxBasePath = 'canvas';
 /*
  * Variable: basePath
  *
@@ -45324,7 +45324,7 @@ mxCellEditor.prototype.installListeners = function(elt) {
         this.clearOnChange &&
         elt.innerHTML == this.getEmptyLabelText() &&
         (!mxClient.IS_FF ||
-          (evt.keyCode != 8 /* Backspace */ && evt.keyCode != 46) /* Delete */)
+          (evt.keyCode != 8 /* Backspace */ && evt.keyCode != 46)) /* Delete */
       ) {
         this.clearOnChange = false;
         elt.innerHTML = '';
