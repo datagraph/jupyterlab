@@ -36,23 +36,23 @@ def get_request_ip():
         return request.environ['HTTP_X_FORWARDED_FOR']
 
 
-@app.route('/heartbeat', methods=['GET', 'POST'])
+@app.route('/canvas/heartbeat', methods=['GET', 'POST'])
 def heart_beat():
     """ Returns if server is alive  """
     LOGGER.info("Received heartbeat check from " +  get_request_ip())
     return "Canvas server is alive"
 
 # Should now support both js and build static files
-@app.route('/js/<path:path>')
+@app.route('/canvas/js/<path:path>')
 def send_js(path):
     return send_from_directory('js', path)
 
-@app.route('/build/<path:path>')
+@app.route('/canvas/build/<path:path>')
 def send_build(path):
     return send_from_directory('build', path)
 
 
-@app.route('/canvas', methods=['GET'])
+@app.route('/canvas/', methods=['GET'])
 def canvas():
     """ Returns if server is alive  """
     LOGGER.info("Received heartbeat check from " +  get_request_ip())
