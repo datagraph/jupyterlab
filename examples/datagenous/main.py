@@ -10,6 +10,8 @@ import logging
 import simplejson as json
 from functools import wraps
 from flask import Flask, request, jsonify, abort,send_from_directory,render_template
+from os.path import join
+import os
 
 
 
@@ -47,10 +49,19 @@ def heart_beat():
 def send_js(path):
     return send_from_directory('js', path)
 
-@app.route('/canvas/build/<path:path>')
+
+# Should now support both js and build static files
+@app.route('/static/@phosphor/<path:path>')
+def send_phosphor(path):
+    return send_from_directory('static/@phosphor', path)
+    
+@app.route('/canvas/build/<path:path>/')
 def send_build(path):
     return send_from_directory('build', path)
 
+@app.route('/canvas/build/<path:mainpath>/<path:subpath>/')
+def send_build_modules(mainpath, subpath):
+    return send_from_directory('build', mainpath + "/" + subpath)
 
 @app.route('/canvas/', methods=['GET'])
 def canvas():

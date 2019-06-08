@@ -42,6 +42,10 @@ import { SetupCommands } from './commands';
 import { Canvas } from './canvas';
 import { Comment } from './comment';
 
+import { SVM } from './SVM';
+import { XYSelector } from './XYSelector';
+import { CSVReader } from './csvreader';
+
 // Let's enjoy reverse engineering phosphor js people's code
 function createCanvasMenu(): MenuBar {
   let addMenu = new Menu({ commands: new CommandRegistry() });
@@ -67,9 +71,18 @@ function createApp(manager: ServiceManager.IManager): void {
   let cmt = new Comment('test');
   cmt.createInstance();
 
-  let cmt2 = new Comment('test1');
+  /*let cmt2 = new Comment('test1');
 
-  cmt2.createInstance();
+  cmt2.createInstance();*/
+
+  let svm = new SVM('Classifier');
+  svm.createInstance();
+
+  let xy = new XYSelector();
+  xy.createInstance();
+
+  let csv = new CSVReader('stop');
+  csv.createInstance();
 
   let commands = new CommandRegistry();
   let useCapture = true;
