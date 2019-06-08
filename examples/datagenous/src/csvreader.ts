@@ -27,7 +27,7 @@ export class CSVReader extends Widget {
       '</div>' +
       '</div>' +
       '<div class="body">' +
-      '<input type="text" name="fname" placeholder="Filename..">' +
+      '<input id = "filename" type="text" name="fname" placeholder="Filename..">' +
       '<br/>' +
       '<br/>' +
       '<textarea rows=8 placeholder= "Readings.."> </textarea>' +
