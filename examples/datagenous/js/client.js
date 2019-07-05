@@ -2,32 +2,48 @@ function file_read_request(widget_id, filetype) {
   console.log('Received file read request from widget:' + widget_id);
   var x = $('#' + widget_id);
   // CSV readers have input as first field, continiuning with assumptions
-  var input_field = x.children(1).children(0);
-  var settings = {
-    async: true,
-    crossDomain: true,
-    url:
-      'http://localhost:5000/demo/api/v1.0/previewfile/' +
-      input_field +
-      '/' +
-      filetype,
-    method: 'GET',
-    headers: {
-      'User-Agent': 'PostmanRuntime/7.13.0',
-      Accept: '*/*',
-      'Cache-Control': 'no-cache',
-      'Postman-Token':
-        'e44130ab-361e-4251-af3a-222542a3948a,4f3b00be-38c0-46e4-bbba-3f14e518f524',
-      Host: 'localhost:5000',
-      'accept-encoding': 'gzip, deflate',
-      Connection: 'keep-alive',
-      'cache-control': 'no-cache'
-    }
-  };
+  var input_field = x
+    .children('.body')
+    .children('#filename')
+    .val();
 
-  $.ajax(settings).done(function(response) {
-    console.log(response);
-    var output_field = x.children(1).children(1);
-    output_field.val(response);
+  var data = null;
+
+  var xhr = new XMLHttpRequest();
+  xhr.withCredentials = true;
+
+  xhr.addEventListener('readystatechange', function() {
+    if (this.readyState === 4) {
+      console.log(this.responseText);
+      var output_field = x
+        .children('.body')
+        .children('textarea')
+        .val(this.responseText);
+      output_field.val(response);
+    }
   });
+
+  xhr.open(
+    'GET',
+    'http://de8.dydra.com:5001/canvas/api/read_csv/' + input_field
+  );
+  xhr.setRequestHeader('User-Agent', 'PostmanRuntime/7.13.0');
+  xhr.setRequestHeader('Accept', '*/*');
+  xhr.setRequestHeader('Cache-Control', 'no-cache');
+  xhr.setRequestHeader(
+    'Postman-Token',
+    'e44130ab-361e-4251-af3a-222542a3948a,fc1ae3ce-99de-46cc-aef5-26900045bd98'
+  );
+  xhr.setRequestHeader('Host', 'localhost:5000');
+  xhr.setRequestHeader('accept-encoding', 'gzip, deflate');
+  xhr.setRequestHeader('Connection', 'keep-alive');
+  xhr.setRequestHeader('cache-control', 'no-cache');
+
+  xhr.send(data);
+}
+
+function run_widget_csv(widget_id, command) {
+  console.log('Run request from: ' + widget_id);
+  console.log('Command: ' + command);
+  file_read_request(widget_id);
 }
