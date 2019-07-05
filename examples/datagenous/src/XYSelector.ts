@@ -34,6 +34,9 @@ export class XYSelector extends Widget {
       '<div class="head">' +
       '<div class="left">XY-Selector</div>' +
       '<div class="right">' +
+      '<a role="button" onclick="setXY(\'' +
+      widget_id +
+      '\',\'csv\')"><i class="icon-play"></i></a>' +
       '<a href="#" class="close"><i class="icon-exit"></i></a>' +
       '</div>' +
       '</div>' +
