@@ -29,6 +29,9 @@ LOGGER.addHandler(HDLR)
 ML_SERVER_PATH="http://localhost:5000"
 
 
+# DELETE ME!!, one user, one demo case XY - selection
+xy_selection = ""
+
 app = Flask(__name__, static_url_path='/static')
 app.config['DEBUG'] = True
 
@@ -76,6 +79,11 @@ def canvas():
     return app.send_static_file('index.html')
 
 
+@app.route('/canvas/api/xy_selection/<string:selection>', methods = ['GET'] )
+def set_xy(selection):
+    xy_selection = selection
+    return selection
+
 
 # Analytics API callers over HTTP
 @app.route('/canvas/api/read_csv/<string:filename>', methods=["GET"])
@@ -92,6 +100,13 @@ def get_csv(filename):
 
     response = requests.request("GET", url, headers=headers)
     return json.dumps(response.text)
+
+
+@app.route('/canvas/api/train_svm', methods=["GET"])
+def train_svm():
+   options = request.get_json()
+   return options
+
 
 
 if __name__ == '__main__':
