@@ -42,6 +42,16 @@ function file_read_request(widget_id, filetype) {
   xhr.send(data);
 }
 
+function setXY(widget_id) {
+  console.log('Received XYset request from widget:' + widget_id);
+  var x = $('#' + widget_id);
+  // CSV readers have input as first field, continiuning with assumptions
+  var input_field = x
+    .children('.body')
+    .children('#filename')
+    .val();
+}
+
 function run_widget_csv(widget_id, command) {
   console.log('Run request from: ' + widget_id);
   console.log('Command: ' + command);
