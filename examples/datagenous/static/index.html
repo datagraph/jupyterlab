@@ -2,27 +2,25 @@
 <html lang="en">
   <head>
     <title>Datagenous Canvas</title>
-    <script id='jupyter-config-data' type="application/json">
-      {{ config_data|tojson }}
-    </script>
-    <script src="{{base_url}}build/bundle.js"></script>
+
+    <script src="build/bundle.js"></script>
         <base href="/">
- <script type="module" src="build/replication/rdf-client.js"></script>
+ <!--<script type="module" src="build/replication/rdf-client.js"></script>-->
 
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mxgraph@3.9.12/javascript/dist/build.min.js"></script>
-<script type="text/javascript" src="js/jui-core.js"></script>
-<script type="text/javascript" src="js/jui-ui.js"></script>
-
+<script type="text/javascript" src="/canvas/js/jui-core.js"></script>
+<script type="text/javascript" src="/canvas/js/jui-ui.js"></script>
 
 
 
 
 	<!-- Loads and initializes the library -->
-  <script type="text/javascript" src="js/mxClient.js"></script>
-  <script type="text/javascript" src="js/drawer.js"></script>
-  <script type="text/javascript" src="build/Comment.js"></script>
-  
+	 <script type="text/javascript" src="/canvas/js/mxClient.js"></script>
+   <script type="text/javascript" src="/canvas/js/client.js"></script>
+
+  <script type="text/javascript" src="/canvas/js/drawer.js"></script>
+
 <!-- Basic style components -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jui@2.0.3/dist/ui.min.css" >
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jui@2.0.3/dist/ui-jennifer.min.css" >
@@ -282,3 +280,4 @@ X_Minimum,X_Maximum,Y_Minimum,Y_Maximum,Pixels_Areas,X_Perimeter ..
 
   </body>
 </html>
+
