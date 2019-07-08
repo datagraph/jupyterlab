@@ -36,6 +36,19 @@ app = Flask(__name__, static_url_path='/static')
 app.config['DEBUG'] = True
 
 
+@app.after_request
+def add_header(r):
+    """
+    Add headers to both force latest IE rendering engine or Chrome Frame,
+    and also to cache the rendered page for 10 minutes.
+    """
+    r.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    r.headers["Pragma"] = "no-cache"
+    r.headers["Expires"] = "0"
+    r.headers['Cache-Control'] = 'public, max-age=0'
+    return r
+
+
 def get_request_ip():
     """ Required when dealing with NGINX servers, as environment
         variable can be different for HTTP_X_FORWARDED_FOR behind
@@ -110,4 +123,4 @@ def train_svm():
 
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5001)
+    app.run(host="0.0.0.0", port=5002)
