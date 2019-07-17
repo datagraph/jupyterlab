@@ -21,7 +21,8 @@ function prepare_mxgraph() {
   // Gets the default parent for inserting new cells. This
   // is normally the first child of the root (ie. layer 0).
   parent = graph.getDefaultParent();
-
+  var style = graph.getStylesheet().getDefaultEdgeStyle();
+  style[mxConstants.STYLE_EDGE] = mxEdgeStyle.ElbowConnector;
   // Adds cells to the model in a single step
   graph.getModel().beginUpdate();
   try {
@@ -49,6 +50,7 @@ function graphUpdateHandler() {
   // do something with the nodes
 }
 
+// Testing purposes only
 function get_window_position_state(window_id) {
   var window_left_pos = $('#' + window_id)[0].style.left;
   var window_top_pos = $('#' + window_id)[0].style.top;
@@ -59,9 +61,81 @@ function get_window_position_state(window_id) {
   //drawline('test', 'test1');
 }
 
+// Control if position is valid,
+// returns boolean
+function position_checker(position) {
+  if (position == 'left') {
+    return true;
+  } else if (position == 'right') {
+    return true;
+  } else {
+    console.error("Unsupported position, supported ones are ['left', 'right']");
+  }
+  return false;
+}
+
+function get_window_midpoint(window_id, position) {
+  var position_control = position_checker(position);
+  if (position_control) {
+    var window_left_pos = $('#' + window_id)[0].style.left;
+    window_left_pos = remove_px(window_left_pos);
+
+    var window_top_pos = $('#' + window_id)[0].style.top;
+    window_top_pos = remove_px(window_top_pos);
+
+    var window_height = $('#' + window_id)[0].style.height;
+    window_height = remove_px(window_height);
+
+    var window_width = $('#' + window_id)[0].style.width;
+    window_width = remove_px(window_width);
+
+    if (position == 'left') {
+      var window_midpoint_x = window_left_pos - 1;
+      var window_midpoint_y = window_top_pos + window_height / 2;
+
+      return [window_midpoint_x, window_midpoint_y];
+    } else if (position == 'right') {
+      var window_midpoint_x = window_left_pos + window_width + 1;
+      var window_midpoint_y = window_top_pos + window_height / 2;
+
+      return [window_midpoint_x, window_midpoint_y];
+    }
+  }
+}
+
+// Removes characters px from style string and convert value to float.
 function remove_px(position_value) {
+  // Check if % sign is present rather than px
+  if (position_value[position_value.length - 1] == '%') {
+    var percentage = position_value.substring(0, position_value.length - 1);
+    var px = (parseFloat(percentage) * 4000) / 100.0;
+    return px;
+  }
   return parseFloat(position_value.substring(0, position_value.length - 2));
 }
+
+function add_vertex(window_id, position) {
+  var position_control = position_checker(position);
+  if (position_control) {
+    points_xy = get_window_midpoint(window_id, position);
+    var v1 = graph.insertVertex(
+      parent,
+      window_id + '_' + position,
+      '',
+      points_xy[0],
+      points_xy[1],
+      0,
+      0
+    );
+  }
+}
+
+function update_vertex_position(window) {}
+
+function remove_vertex(window, position) {}
+
+function delete_edge() {}
+
 function drawline(window_1, window_2) {
   //var draw = SVG(document.getElementById('graphContainer'));
 
