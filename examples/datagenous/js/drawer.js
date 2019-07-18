@@ -5,6 +5,15 @@ var graph;
 var parent;
 var edge_id = 100;
 
+function getCells_ByType(graph, TypeCell) {
+  var AllCells = graph.getChildCells(graph.getDefaultParent(), true, true);
+  var result = $.grep(AllCells, function(s) {
+    return s.getValue().localName == TypeCell;
+  });
+  if (result.length != 0) return result;
+  else return null;
+}
+
 function prepare_mxgraph() {
   var container = document.getElementById('graphContainer');
 
@@ -21,6 +30,80 @@ function prepare_mxgraph() {
   // Gets the default parent for inserting new cells. This
   // is normally the first child of the root (ie. layer 0).
   parent = graph.getDefaultParent();
+  graph.setConnectable(true);
+
+  // delete key
+  var keyHandler = new mxKeyHandler(graph);
+  keyHandler.bindKey(46, function(evt) {
+    if (graph.isEnabled()) {
+      selected_cells = graph.getSelectionCells();
+      // Only delete edges
+      if (selected_cells.length == 1) {
+        if (selected_cells[0].edge) {
+          graph.removeCells();
+        } else {
+          console.error("Can't delete vertexes");
+        }
+      }
+    }
+  });
+
+  graph.getModel().addListener(mxEvent.CHANGE, function(sender, evt) {
+    console.log('Graph changed');
+    var changes = evt.properties.changes;
+    if (changes.length == 1) {
+      console.log('Potentially a delete edge or add vertex change');
+      if (changes[0].child.edge) {
+        if (changes[0].constructor.name == 'mxGeometryChange') {
+          console.log('Geometry change only');
+        } else {
+          console.log('Deleting an edge');
+          child = changes[0].child;
+
+          source_vertex = child.source.id;
+          target_vertex = child.target.id;
+
+          console.log('From :' + source_vertex);
+          console.log('To :' + target_vertex);
+        }
+      }
+    } else if (changes.length == 5) {
+      console.log('Potentially a widget to widget connection');
+      if (
+        changes[1].constructor.name == 'mxTerminalChange' &&
+        changes[2].constructor.name == 'mxTerminalChange'
+      ) {
+        if (
+          changes[0].constructor.name == 'mxChildChange' &&
+          changes[4].constructor.name == 'mxChildChange'
+        ) {
+          console.log('Two vertexes are connected via an edge');
+          child = changes[0].child;
+
+          source_vertex = child.source.id;
+          target_vertex = child.target.id;
+
+          console.log('From :' + source_vertex);
+          console.log('To :' + target_vertex);
+        }
+      }
+    }
+
+    let connectors = getCells_ByType(graph, 'Connector');
+    if (connectors != null && connectors.length > 0) {
+      connectors.forEach(element => {
+        var source = graph.getModel().getTerminal(element, true);
+        var target = graph.getModel().getTerminal(element, false);
+        setData(element, {
+          FromActivityClientId: source.getId(),
+          ToActivityClientId: target.getId()
+        });
+        console.log('Connected from ' + source + ' to target:' + target);
+      });
+    }
+  });
+
+  // Default style with elbow connector
   var style = graph.getStylesheet().getDefaultEdgeStyle();
   style[mxConstants.STYLE_EDGE] = mxEdgeStyle.ElbowConnector;
   // Adds cells to the model in a single step
@@ -90,7 +173,7 @@ function get_window_midpoint(window_id, position) {
     window_width = remove_px(window_width);
 
     if (position == 'left') {
-      var window_midpoint_x = window_left_pos - 1;
+      var window_midpoint_x = window_left_pos - 8;
       var window_midpoint_y = window_top_pos + window_height / 2;
 
       return [window_midpoint_x, window_midpoint_y];
@@ -108,7 +191,8 @@ function remove_px(position_value) {
   // Check if % sign is present rather than px
   if (position_value[position_value.length - 1] == '%') {
     var percentage = position_value.substring(0, position_value.length - 1);
-    var px = (parseFloat(percentage) * 4000) / 100.0;
+    var container_width = parseFloat($('#graphContainer').style.width);
+    var px = (parseFloat(percentage) * container_width) / 100.0;
     return px;
   }
   return parseFloat(position_value.substring(0, position_value.length - 2));
@@ -124,9 +208,11 @@ function add_vertex(window_id, position) {
       '',
       points_xy[0],
       points_xy[1],
-      0,
-      0
+      8,
+      8
     );
+    v1.geometry.offset = new mxPoint(-5, -5);
+    v1.geometry.relative = true;
   }
 }
 
