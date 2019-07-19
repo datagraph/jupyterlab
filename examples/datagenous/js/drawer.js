@@ -5,13 +5,13 @@ var graph;
 var parent;
 var edge_id = 100;
 
+var vertex_width = 8;
+var vertex_height = 8;
+
+// Not working , obsolete - TO DO will delete later
 function getCells_ByType(graph, TypeCell) {
   var AllCells = graph.getChildCells(graph.getDefaultParent(), true, true);
-  var result = $.grep(AllCells, function(s) {
-    return s.getValue().localName == TypeCell;
-  });
-  if (result.length != 0) return result;
-  else return null;
+  return null;
 }
 
 function prepare_mxgraph() {
@@ -31,6 +31,8 @@ function prepare_mxgraph() {
   // is normally the first child of the root (ie. layer 0).
   parent = graph.getDefaultParent();
   graph.setConnectable(true);
+  graph.setAllowDanglingEdges(false);
+  graph.setDisconnectOnMove(false);
 
   // delete key
   var keyHandler = new mxKeyHandler(graph);
@@ -53,20 +55,21 @@ function prepare_mxgraph() {
     var changes = evt.properties.changes;
     if (changes.length == 1) {
       console.log('Potentially a delete edge or add vertex change');
-      if (changes[0].child.edge) {
-        if (changes[0].constructor.name == 'mxGeometryChange') {
-          console.log('Geometry change only');
-        } else {
-          console.log('Deleting an edge');
-          child = changes[0].child;
+      if (changes[0].child != null)
+        if (changes[0].child.edge) {
+          if (changes[0].constructor.name == 'mxGeometryChange') {
+            console.log('Geometry change only');
+          } else {
+            console.log('Deleting an edge');
+            child = changes[0].child;
 
-          source_vertex = child.source.id;
-          target_vertex = child.target.id;
+            source_vertex = child.source.id;
+            target_vertex = child.target.id;
 
-          console.log('From :' + source_vertex);
-          console.log('To :' + target_vertex);
+            console.log('From :' + source_vertex);
+            console.log('To :' + target_vertex);
+          }
         }
-      }
     } else if (changes.length == 5) {
       console.log('Potentially a widget to widget connection');
       if (
@@ -133,17 +136,6 @@ function graphUpdateHandler() {
   // do something with the nodes
 }
 
-// Testing purposes only
-function get_window_position_state(window_id) {
-  var window_left_pos = $('#' + window_id)[0].style.left;
-  var window_top_pos = $('#' + window_id)[0].style.top;
-  var window_height = $('#' + window_id)[0].style.height;
-  var window_width = $('#' + window_id)[0].style.width;
-
-  console.log(window_left_pos);
-  //drawline('test', 'test1');
-}
-
 // Control if position is valid,
 // returns boolean
 function position_checker(position) {
@@ -208,19 +200,48 @@ function add_vertex(window_id, position) {
       '',
       points_xy[0],
       points_xy[1],
-      8,
-      8
+      vertex_width,
+      vertex_height
     );
     v1.geometry.offset = new mxPoint(-5, -5);
-    v1.geometry.relative = true;
+    //v1.geometry.relative = true;
   }
 }
 
-function update_vertex_position(window) {}
+// Uses absolute position with 8 x 8 default size
+function update_vertex_position(window_id, position, x, y) {
+  graph.model.cells[window_id + '_' + position].setGeometry(
+    new mxGeometry(x, y, vertex_width, vertex_height)
+  );
+  graph.refresh(); // update the graph
+}
 
-function remove_vertex(window, position) {}
+function redraw_vertexes(window_id) {
+  points_right_xy = get_window_midpoint(window_id, 'right');
+  points_left_xy = get_window_midpoint(window_id, 'left');
 
-function delete_edge() {}
+  update_vertex_position(
+    window_id,
+    'right',
+    points_right_xy[0],
+    points_right_xy[1]
+  );
+  update_vertex_position(
+    window_id,
+    'left',
+    points_left_xy[0],
+    points_left_xy[1]
+  );
+}
+
+function draw_vertexes(window_id) {
+  points_right_xy = get_window_midpoint(window_id, 'right');
+  points_left_xy = get_window_midpoint(window_id, 'left');
+
+  add_vertex(window_id, 'right');
+  add_vertex(window_id, 'left');
+}
+function remove_vertex(window_id, position) {}
 
 function drawline(window_1, window_2) {
   //var draw = SVG(document.getElementById('graphContainer'));
