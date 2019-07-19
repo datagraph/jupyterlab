@@ -8,6 +8,9 @@ var edge_id = 100;
 var vertex_width = 8;
 var vertex_height = 8;
 
+var vertex_set = new Set();
+var edge_set = new Set();
+
 // Not working , obsolete - TO DO will delete later
 function getCells_ByType(graph, TypeCell) {
   var AllCells = graph.getChildCells(graph.getDefaultParent(), true, true);
@@ -33,7 +36,7 @@ function prepare_mxgraph() {
   graph.setConnectable(true);
   graph.setAllowDanglingEdges(false);
   graph.setDisconnectOnMove(false);
-
+  graph.setMultigraph(false);
   // delete key
   var keyHandler = new mxKeyHandler(graph);
   keyHandler.bindKey(46, function(evt) {
@@ -193,17 +196,24 @@ function remove_px(position_value) {
 function add_vertex(window_id, position) {
   var position_control = position_checker(position);
   if (position_control) {
-    points_xy = get_window_midpoint(window_id, position);
-    var v1 = graph.insertVertex(
-      parent,
-      window_id + '_' + position,
-      '',
-      points_xy[0],
-      points_xy[1],
-      vertex_width,
-      vertex_height
-    );
-    v1.geometry.offset = new mxPoint(-5, -5);
+    var vertex_name = window_id + '_' + position;
+    if (!vertex_set.has(vertex_name)) {
+      points_xy = get_window_midpoint(window_id, position);
+      var v1 = graph.insertVertex(
+        parent,
+        vertex_name,
+        '',
+        points_xy[0],
+        points_xy[1],
+        vertex_width,
+        vertex_height
+      );
+      v1.geometry.offset = new mxPoint(-5, -5);
+      vertex_set.add(vertex_name);
+    } else {
+      console.error('Vertex already exists!');
+    }
+
     //v1.geometry.relative = true;
   }
 }
