@@ -11,6 +11,7 @@ import os
 import logging
 import simplejson as sjson
 import json
+import uuid
 from functools import wraps
 from flask import Flask, request, jsonify, abort,send_from_directory,render_template
 from os.path import join
@@ -76,7 +77,7 @@ def send_js(path):
 @app.route('/static/@phosphor/<path:path>')
 def send_phosphor(path):
     return send_from_directory('static/@phosphor', path)
-    
+
 @app.route('/canvas/build/<path:path>/')
 def send_build(path):
     return send_from_directory('build', path)
@@ -87,10 +88,22 @@ def send_build_modules(mainpath, subpath):
 
 @app.route('/canvas/', methods=['GET'])
 def canvas():
-    """ Returns if server is alive  """
-    LOGGER.info("Received heartbeat check from " +  get_request_ip())
+    """ Demo canvas  """
+    LOGGER.info("Starting test canvas - IP:" +  get_request_ip())
     return app.send_static_file('index.html')
 
+
+@app.route('/canvas/<string:canvas_id>', methods=['GET'])
+def canvas(canvas_id):
+    """ Canvases that persist and follow permissions  """
+    LOGGER.info("Starting canvas  "+ canvas_id + " - IP:"  +  get_request_ip())
+    return app.send_static_file('index.html')
+
+
+@app.route('/menu/create_canvas')
+def new_canvas():
+    """ Creates a new canvas for user """
+    pass
 
 @app.route('/canvas/api/xy_selection/<string:selection>', methods = ['GET'] )
 def set_xy(selection):
