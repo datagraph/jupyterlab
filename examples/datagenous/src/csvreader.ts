@@ -34,7 +34,10 @@ export class CSVReader extends Widget {
       '</div>';
 
     node.setAttribute('class', 'window');
-    node.setAttribute('onMouseUp', "get_window_position_state('test')");
+    node.setAttribute(
+      'onMouseUp',
+      "get_window_position_state('" + widget_id + "')"
+    );
 
     return node;
   }
