@@ -94,7 +94,7 @@ def canvas():
 
 
 @app.route('/canvas/<string:canvas_id>', methods=['GET'])
-def canvas(canvas_id):
+def canvas_id(canvas_id):
     """ Canvases that persist and follow permissions  """
     LOGGER.info("Starting canvas  "+ canvas_id + " - IP:"  +  get_request_ip())
     return app.send_static_file('index.html')
