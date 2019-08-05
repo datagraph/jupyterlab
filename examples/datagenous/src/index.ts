@@ -45,6 +45,7 @@ import { Comment } from './comment';
 import { SVM } from './SVM';
 import { XYSelector } from './XYSelector';
 import { CSVReader } from './csvreader';
+import { LineChart } from './LineChart';
 
 // Let's enjoy reverse engineering phosphor js people's code
 function createCanvasMenu(): MenuBar {

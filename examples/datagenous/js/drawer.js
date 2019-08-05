@@ -11,6 +11,9 @@ var vertex_height = 8;
 var vertex_set = new Set();
 var edge_set = new Set();
 
+// If UI updates are due to syncing with peers, do not publish them back
+var sync_lock = false;
+
 // Not working , obsolete - TO DO will delete later
 function getCells_ByType(graph, TypeCell) {
   var AllCells = graph.getChildCells(graph.getDefaultParent(), true, true);
