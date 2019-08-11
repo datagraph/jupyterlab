@@ -27,8 +27,8 @@ function create_line_chart(canvas_id, http_endpoint, interval) {
             zeroLineColor: 'transparent'
           },
           ticks: {
-            suggestedMin: -30.0,
-            suggestedMax: 30.0,
+            suggestedMin: -2.0,
+            suggestedMax: 2.0,
             padding: 20,
             fontColor: '#2380f7'
           }

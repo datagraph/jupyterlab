@@ -46,6 +46,7 @@ import { SVM } from './SVM';
 import { XYSelector } from './XYSelector';
 import { CSVReader } from './csvreader';
 import { LineChart } from './LineChart';
+import { HTTPEndpoint } from './HTTPEndpoint';
 
 // Let's enjoy reverse engineering phosphor js people's code
 function createCanvasMenu(): MenuBar {
@@ -85,8 +86,14 @@ function createApp(manager: ServiceManager.IManager): void {
   let csv = new CSVReader('stop');
   csv.createInstance();
 
+  let http = new HTTPEndpoint();
+  http.createInstance();
+
   let commands = new CommandRegistry();
   let useCapture = true;
+
+  let linechart = new LineChart();
+  linechart.createInstance();
 
   // Setup the keydown listener for the document.
   document.addEventListener(
