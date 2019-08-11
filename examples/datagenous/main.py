@@ -139,7 +139,7 @@ def add_proxy_http_api(widget_id):
     pass
 
 @app.route('/proxy/hit/api/<string:widget_id>')
-def add_proxy_http_api(widget_id):
+def hit_proxy_http_api(widget_id):
     pass
 
 
