@@ -1,4 +1,4 @@
-function create_line_chart(canvas_id) {
+function create_line_chart(canvas_id, http_endpoint, interval) {
   // For demo stick to same config
   gradientChartOptionsConfigurationWithTooltipBlue = {
     maintainAspectRatio: false,
@@ -87,4 +87,39 @@ function create_line_chart(canvas_id) {
     },
     options: gradientChartOptionsConfigurationWithTooltipBlueSaving
   };
+
+  // Demo specific settings
+  var widget_chart = new Chart(ctx, config);
+
+  setInterval(function() {
+    // Get data from localhost
+    var data = null;
+
+    var xhr = new XMLHttpRequest();
+    xhr.withCredentials = true;
+
+    xhr.addEventListener('readystatechange', function() {
+      if (this.readyState === 4) {
+        var resp = JSON.parse(this.responseText);
+        myChartData.data.datasets[0].data.shift();
+        myChartData.data.datasets[0].data.push(resp.point);
+        myChartData.update();
+      }
+    });
+
+    xhr.open('GET', http_endpoint);
+    xhr.setRequestHeader('User-Agent', 'PostmanRuntime/7.13.0');
+    xhr.setRequestHeader('Accept', '*/*');
+    xhr.setRequestHeader('Cache-Control', 'no-cache');
+    xhr.setRequestHeader(
+      'Postman-Token',
+      'd4d78eb9-4bd1-4f9e-91a6-7994b7735a0b,f2743424-12b7-4a0a-a570-02c36fb08fe2'
+    );
+    xhr.setRequestHeader('Host', 'localhost:5000');
+    xhr.setRequestHeader('accept-encoding', 'gzip, deflate');
+    xhr.setRequestHeader('Connection', 'keep-alive');
+    xhr.setRequestHeader('cache-control', 'no-cache');
+
+    xhr.send(data);
+  }, interval);
 }
