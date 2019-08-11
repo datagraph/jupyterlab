@@ -134,6 +134,14 @@ def train_svm():
    return options
 
 
+@app.route('/proxy/add/api/<string:widget_id>')
+def add_proxy_http_api(widget_id):
+    pass
+
+@app.route('/proxy/hit/api/<string:widget_id>')
+def add_proxy_http_api(widget_id):
+    pass
+
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5002)
