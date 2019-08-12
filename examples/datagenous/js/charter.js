@@ -85,7 +85,7 @@ function create_line_chart(canvas_id, http_endpoint, interval) {
         }
       ]
     },
-    options: gradientChartOptionsConfigurationWithTooltipBlueSaving
+    options: gradientChartOptionsConfigurationWithTooltipBlue
   };
 
   // Demo specific settings

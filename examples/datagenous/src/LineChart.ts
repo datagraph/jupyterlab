@@ -33,9 +33,9 @@ export class LineChart extends Widget {
       '<div class="left">Charts/LineChart/' +
       '</div>' +
       '<div class="right">' +
-      '<a id="play-button" onclick="draw_line_chart(' +
+      '<a role="button" id="play-button" onclick="create_line_chart(\'canvas_' +
       widget_id +
-      ');" href="" >' +
+      '\');"  >' +
       '<i class="icon-play"></i></a>' +
       '<a href="#" class="close"><i class="icon-exit"></i></a>' +
       '</div>' +
