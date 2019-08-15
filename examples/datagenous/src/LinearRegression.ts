@@ -5,8 +5,7 @@ import { CustomMessage } from './CustomMessage';
 
 export class LinearRegression extends Widget {
   id: string;
-  // Classification, Regression
-  svm_type: string;
+
   // Data source ids
   children_ids: string[];
   // Accepted children types
@@ -22,12 +21,9 @@ export class LinearRegression extends Widget {
   constructor() {
     super({ node: LinearRegression.createNode(uuid(), svm_type) });
     //this.children_types[0] = "tabular-data-source-xy";
-    if (svm_type == 'Classifier') this.widget_type = 'sklearn-svm-classifier';
-    else if (svm_type == 'Regressor')
-      this.widget_type = 'sklearn-svm-regressor';
   }
 
-  static createNode(widget_id: string, svm_type: string): HTMLElement {
+  static createNode(widget_id: string): HTMLElement {
     // Create two widgets, delete me and make me dynamic later
     let node = document.createElement('div');
     node.id = widget_id;
