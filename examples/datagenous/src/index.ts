@@ -47,6 +47,7 @@ import { XYSelector } from './XYSelector';
 import { CSVReader } from './csvreader';
 import { LineChart } from './LineChart';
 import { HTTPEndpoint } from './HTTPEndpoint';
+import { LinearRegression } from './LinearRegression';
 
 // Let's enjoy reverse engineering phosphor js people's code
 function createCanvasMenu(): MenuBar {
@@ -77,7 +78,7 @@ function createApp(manager: ServiceManager.IManager): void {
 
   cmt2.createInstance();*/
 
-  let svm = new SVM('Classifier');
+  let svm = new SVM('Regression');
   svm.createInstance();
 
   let xy = new XYSelector();
@@ -89,11 +90,17 @@ function createApp(manager: ServiceManager.IManager): void {
   let http = new HTTPEndpoint();
   http.createInstance();
 
+  let http2 = new HTTPEndpoint();
+  http2.createInstance();
+
   let commands = new CommandRegistry();
   let useCapture = true;
 
   let linechart = new LineChart();
   linechart.createInstance();
+
+  let linearregresion = new LinearRegression();
+  LinearRegression.createInstance();
 
   // Setup the keydown listener for the document.
   document.addEventListener(
