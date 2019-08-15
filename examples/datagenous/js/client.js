@@ -15,17 +15,14 @@ function file_read_request(widget_id, filetype) {
   xhr.addEventListener('readystatechange', function() {
     if (this.readyState === 4) {
       console.log(this.responseText);
-      var output_field = x
-        .children('.body')
-        .children('textarea')
-        .val(this.responseText);
-      output_field.val(response);
+      var output_field = x.children('.body').children('textarea');
+      output_field.val(this.response.text);
     }
   });
 
   xhr.open(
     'GET',
-    'http://de8.dydra.com:5001/canvas/api/read_csv/' + input_field
+    'http://de8.dydra.com:5002/canvas/api/read_csv/' + input_field
   );
   xhr.setRequestHeader('User-Agent', 'PostmanRuntime/7.13.0');
   xhr.setRequestHeader('Accept', '*/*');
