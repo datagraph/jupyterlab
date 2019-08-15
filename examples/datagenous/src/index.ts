@@ -100,7 +100,7 @@ function createApp(manager: ServiceManager.IManager): void {
   linechart.createInstance();
 
   let linearregresion = new LinearRegression();
-  LinearRegression.createInstance();
+  linearregresion.createInstance();
 
   // Setup the keydown listener for the document.
   document.addEventListener(
