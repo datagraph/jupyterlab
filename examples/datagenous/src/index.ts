@@ -99,6 +99,9 @@ function createApp(manager: ServiceManager.IManager): void {
   let linechart = new LineChart();
   linechart.createInstance();
 
+  let linechart2 = new LineChart();
+  linechart2.createInstance();
+
   let linearregresion = new LinearRegression();
   linearregresion.createInstance();
 
