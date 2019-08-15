@@ -19,7 +19,7 @@ export class LinearRegression extends Widget {
   hyperparameter_json: string;
 
   constructor() {
-    super({ node: LinearRegression.createNode(uuid(), svm_type) });
+    super({ node: LinearRegression.createNode(uuid()) });
     //this.children_types[0] = "tabular-data-source-xy";
   }
 
@@ -31,7 +31,6 @@ export class LinearRegression extends Widget {
     node.innerHTML =
       '<div class="head">' +
       '<div class="left">Model/LinearRegression/' +
-      svm_type +
       '</div>' +
       '<div class="right">' +
       '<a id="play-button" onclick="train_linear_regression();" href="" ><i class="icon-play"></i></a>' +
