@@ -5,8 +5,7 @@ import { CustomMessage } from './CustomMessage';
 
 export class LineChart extends Widget {
   id: string;
-  // Classification, Regression
-  svm_type: string;
+
   // Data source ids
   children_ids: string[];
   // Accepted children types

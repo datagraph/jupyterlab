@@ -16,7 +16,7 @@ function file_read_request(widget_id, filetype) {
     if (this.readyState === 4) {
       console.log(this.responseText);
       var output_field = x.children('.body').children('textarea');
-      output_field.val(this.response.text);
+      output_field.val(JSON.parse(this.response.text));
     }
   });
 
