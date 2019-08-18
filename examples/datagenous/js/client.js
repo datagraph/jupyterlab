@@ -47,6 +47,35 @@ function setXY(widget_id) {
     .children('.body')
     .children('#filename')
     .val();
+
+  var data = null;
+
+  var xhr = new XMLHttpRequest();
+  xhr.withCredentials = true;
+
+  xhr.addEventListener('readystatechange', function() {
+    if (this.readyState === 4) {
+      console.log(this.responseText);
+    }
+  });
+
+  xhr.open(
+    'GET',
+    'http://de8.dydra.com:5002/canvas/api/xy_selection/' + input_field
+  );
+  xhr.setRequestHeader('User-Agent', 'PostmanRuntime/7.15.2');
+  xhr.setRequestHeader('Accept', '*/*');
+  xhr.setRequestHeader('Cache-Control', 'no-cache');
+  xhr.setRequestHeader(
+    'Postman-Token',
+    'edd60906-7bf1-496c-9831-f9e08508600b,c5a98ca1-ae9f-47ff-a257-8515d75491ba'
+  );
+  xhr.setRequestHeader('Host', 'de8.dydra.com:5002');
+  xhr.setRequestHeader('Accept-Encoding', 'gzip, deflate');
+  xhr.setRequestHeader('Connection', 'keep-alive');
+  xhr.setRequestHeader('cache-control', 'no-cache');
+
+  xhr.send(data);
 }
 
 function run_widget_csv(widget_id, command) {
