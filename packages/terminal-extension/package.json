@@ -1,6 +1,6 @@
 {
   "name": "@jupyterlab/terminal-extension",
-  "version": "1.0.0-alpha.9",
+  "version": "1.2.0-alpha.0",
   "description": "JupyterLab - Terminal Emulator Extension",
   "homepage": "https://github.com/jupyterlab/jupyterlab",
   "bugs": {
@@ -16,10 +16,15 @@
     "lib/*.d.ts",
     "lib/*.js.map",
     "lib/*.js",
-    "schema/*.json"
+    "schema/*.json",
+    "style/**/*.css"
+  ],
+  "sideEffects": [
+    "style/**/*.css"
   ],
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
+  "style": "style/index.css",
   "directories": {
     "lib": "lib/"
   },
@@ -31,13 +36,13 @@
     "watch": "tsc -b --watch"
   },
   "dependencies": {
-    "@jupyterlab/application": "^1.0.0-alpha.9",
-    "@jupyterlab/apputils": "^1.0.0-alpha.9",
-    "@jupyterlab/coreutils": "^3.0.0-alpha.9",
-    "@jupyterlab/launcher": "^1.0.0-alpha.9",
-    "@jupyterlab/mainmenu": "^1.0.0-alpha.9",
-    "@jupyterlab/terminal": "^1.0.0-alpha.9",
-    "@phosphor/widgets": "^1.7.0"
+    "@jupyterlab/application": "^1.2.0-alpha.0",
+    "@jupyterlab/apputils": "^1.2.0-alpha.0",
+    "@jupyterlab/coreutils": "^3.2.0-alpha.0",
+    "@jupyterlab/launcher": "^1.2.0-alpha.0",
+    "@jupyterlab/mainmenu": "^1.2.0-alpha.0",
+    "@jupyterlab/terminal": "^1.2.0-alpha.0",
+    "@phosphor/widgets": "^1.8.0"
   },
   "devDependencies": {
     "@types/webpack-env": "^1.13.9",

@@ -71,13 +71,18 @@ const commands: JupyterFrontEndPlugin<void> = {
 export const editorSyntaxStatus: JupyterFrontEndPlugin<void> = {
   id: '@jupyterlab/codemirror-extension:editor-syntax-status',
   autoStart: true,
-  requires: [IStatusBar, IEditorTracker, ILabShell],
+  requires: [IEditorTracker, ILabShell],
+  optional: [IStatusBar],
   activate: (
     app: JupyterFrontEnd,
-    statusBar: IStatusBar,
     tracker: IEditorTracker,
-    labShell: ILabShell
+    labShell: ILabShell,
+    statusBar: IStatusBar | null
   ) => {
+    if (!statusBar) {
+      // Automatically disable if statusbar missing
+      return;
+    }
     let item = new EditorSyntaxStatus({ commands: app.commands });
     labShell.currentChanged.connect(() => {
       const current = labShell.currentWidget;
@@ -149,8 +154,17 @@ function activateEditorCommands(
   /**
    * Update the setting values.
    */
-  function updateSettings(settings: ISettingRegistry.ISettings): void {
+  async function updateSettings(
+    settings: ISettingRegistry.ISettings
+  ): Promise<void> {
     keyMap = (settings.get('keyMap').composite as string | null) || keyMap;
+
+    // Lazy loading of vim mode
+    if (keyMap === 'vim') {
+      // @ts-ignore
+      await import('codemirror/keymap/vim.js');
+    }
+
     theme = (settings.get('theme').composite as string | null) || theme;
     scrollPastEnd = settings.get('scrollPastEnd').composite as boolean | null;
     styleActiveLine =
@@ -184,11 +198,11 @@ function activateEditorCommands(
 
   // Fetch the initial state of the settings.
   Promise.all([settingRegistry.load(id), restored])
-    .then(([settings]) => {
-      updateSettings(settings);
+    .then(async ([settings]) => {
+      await updateSettings(settings);
       updateTracker();
-      settings.changed.connect(() => {
-        updateSettings(settings);
+      settings.changed.connect(async () => {
+        await updateSettings(settings);
         updateTracker();
       });
     })
@@ -245,7 +259,6 @@ function activateEditorCommands(
       const key = 'theme';
       const value = (theme = (args['theme'] as string) || theme);
 
-      updateTracker();
       return settingRegistry.set(id, key, value).catch((reason: Error) => {
         console.error(`Failed to set ${id}:${key} - ${reason.message}`);
       });
@@ -262,7 +275,6 @@ function activateEditorCommands(
       const key = 'keyMap';
       const value = (keyMap = (args['keyMap'] as string) || keyMap);
 
-      updateTracker();
       return settingRegistry.set(id, key, value).catch((reason: Error) => {
         console.error(`Failed to set ${id}:${key} - ${reason.message}`);
       });

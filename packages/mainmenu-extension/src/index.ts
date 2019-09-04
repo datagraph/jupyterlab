@@ -18,8 +18,6 @@ import { ICommandPalette, showDialog, Dialog } from '@jupyterlab/apputils';
 
 import { PageConfig, URLExt } from '@jupyterlab/coreutils';
 
-import { IInspector } from '@jupyterlab/inspector';
-
 import {
   IMainMenu,
   IMenuExtender,
@@ -117,13 +115,12 @@ export namespace CommandIDs {
 const plugin: JupyterFrontEndPlugin<IMainMenu> = {
   id: '@jupyterlab/mainmenu-extension:plugin',
   requires: [ICommandPalette, IRouter],
-  optional: [IInspector, ILabShell],
+  optional: [ILabShell],
   provides: IMainMenu,
   activate: (
     app: JupyterFrontEnd,
     palette: ICommandPalette,
     router: IRouter,
-    inspector: IInspector | null,
     labShell: ILabShell | null
   ): IMainMenu => {
     const { commands } = app;
@@ -137,12 +134,12 @@ const plugin: JupyterFrontEndPlugin<IMainMenu> = {
     logo.id = 'jp-MainLogo';
 
     // Only add quit button if the back-end supports it by checking page config.
-    let quitButton = PageConfig.getOption('quitButton');
-    menu.fileMenu.quitEntry = quitButton === 'True';
+    const quitButton = PageConfig.getOption('quitButton').toLowerCase();
+    menu.fileMenu.quitEntry = quitButton === 'true';
 
     // Create the application menus.
     createEditMenu(app, menu.editMenu);
-    createFileMenu(app, menu.fileMenu, router, inspector);
+    createFileMenu(app, menu.fileMenu, router);
     createKernelMenu(app, menu.kernelMenu);
     createRunMenu(app, menu.runMenu);
     createSettingsMenu(app, menu.settingsMenu);
@@ -292,8 +289,7 @@ export function createEditMenu(app: JupyterFrontEnd, menu: EditMenu): void {
 export function createFileMenu(
   app: JupyterFrontEnd,
   menu: FileMenu,
-  router: IRouter,
-  inspector: IInspector | null
+  router: IRouter
 ): void {
   const commands = menu.menu.commands;
 
@@ -409,11 +405,11 @@ export function createFileMenu(
     { command: 'filebrowser:create-main-launcher' }
   ];
 
+  const openGroup = [{ command: 'filebrowser:open-path' }];
+
   const newViewGroup = [
     { command: 'docmanager:clone' },
-    { command: CommandIDs.createConsole },
-    inspector ? { command: 'inspector:open' } : null,
-    { command: 'docmanager:open-direct' }
+    { command: CommandIDs.createConsole }
   ].filter(item => !!item);
 
   // Add the close group
@@ -451,10 +447,11 @@ export function createFileMenu(
   const printGroup = [{ command: 'apputils:print' }];
 
   menu.addGroup(newGroup, 0);
-  menu.addGroup(newViewGroup, 1);
-  menu.addGroup(closeGroup, 2);
-  menu.addGroup(saveGroup, 3);
-  menu.addGroup(reGroup, 4);
+  menu.addGroup(openGroup, 1);
+  menu.addGroup(newViewGroup, 2);
+  menu.addGroup(closeGroup, 3);
+  menu.addGroup(saveGroup, 4);
+  menu.addGroup(reGroup, 5);
   menu.addGroup(printGroup, 98);
   if (menu.quitEntry) {
     menu.addGroup(quitGroup, 99);
@@ -528,7 +525,7 @@ export function createKernelMenu(app: JupyterFrontEnd, menu: KernelMenu): void {
         body: 'Shut down all kernels?',
         buttons: [
           Dialog.cancelButton(),
-          Dialog.warnButton({ label: 'SHUT DOWN ALL' })
+          Dialog.warnButton({ label: 'Shut Down All' })
         ]
       }).then(result => {
         if (result.button.accept) {

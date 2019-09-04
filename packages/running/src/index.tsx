@@ -19,8 +19,6 @@ import { PathExt } from '@jupyterlab/coreutils';
 
 import { ServiceManager, Session, TerminalSession } from '@jupyterlab/services';
 
-import '../style/index.css';
-
 /**
  * The class name added to a running widget.
  */
@@ -173,7 +171,7 @@ function Item<M>(props: SessionProps<M> & { model: M }) {
         className={`${SHUTDOWN_BUTTON_CLASS} jp-mod-styled`}
         onClick={() => props.shutdown(model)}
       >
-        SHUT DOWN
+        SHUT&nbsp;DOWN
       </button>
     </li>
   );
@@ -221,7 +219,7 @@ function Section<M>(props: SessionProps<M>) {
       title: `Shut Down All ${props.name} Sessions?`,
       buttons: [
         Dialog.cancelButton(),
-        Dialog.warnButton({ label: 'SHUT DOWN ALL' })
+        Dialog.warnButton({ label: 'Shut Down All' })
       ]
     }).then(result => {
       if (result.button.accept) {

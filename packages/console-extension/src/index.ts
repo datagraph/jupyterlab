@@ -12,15 +12,15 @@ import {
   Dialog,
   IClientSession,
   ICommandPalette,
-  InstanceTracker,
-  showDialog
+  showDialog,
+  WidgetTracker
 } from '@jupyterlab/apputils';
 
 import { IEditorServices } from '@jupyterlab/codeeditor';
 
 import { ConsolePanel, IConsoleTracker } from '@jupyterlab/console';
 
-import { ISettingRegistry, PageConfig } from '@jupyterlab/coreutils';
+import { ISettingRegistry, PageConfig, URLExt } from '@jupyterlab/coreutils';
 
 import { IFileBrowserFactory } from '@jupyterlab/filebrowser';
 
@@ -141,20 +141,18 @@ async function activateConsole(
   const { commands, shell } = app;
   const category = 'Console';
 
-  // Create an instance tracker for all console panels.
-  const tracker = new InstanceTracker<ConsolePanel>({ namespace: 'console' });
+  // Create a widget tracker for all console panels.
+  const tracker = new WidgetTracker<ConsolePanel>({ namespace: 'console' });
 
   // Handle state restoration.
-  restorer.restore(tracker, {
+  void restorer.restore(tracker, {
     command: CommandIDs.create,
     args: panel => ({
       path: panel.console.session.path,
       name: panel.console.session.name,
       kernelPreference: {
-        name: panel.console.session.kernel && panel.console.session.kernel.name,
-        language:
-          panel.console.session.language &&
-          panel.console.session.kernel.language
+        name: panel.console.session.kernelPreference.name,
+        language: panel.console.session.kernelPreference.language
       }
     }),
     name: panel => panel.console.session.path,
@@ -181,7 +179,7 @@ async function activateConsole(
           let kernelIconUrl = specs.kernelspecs[name].resources['logo-64x64'];
           if (kernelIconUrl) {
             let index = kernelIconUrl.indexOf('kernelspecs');
-            kernelIconUrl = baseUrl + kernelIconUrl.slice(index);
+            kernelIconUrl = URLExt.join(baseUrl, kernelIconUrl.slice(index));
           }
           disposables.add(
             launcher.add({
@@ -235,7 +233,7 @@ async function activateConsole(
       contentFactory,
       mimeTypeService: editorServices.mimeTypeService,
       rendermime,
-      setBusy: status ? status.setBusy.bind(status) : undefined,
+      setBusy: status && (() => status.setBusy()),
       ...(options as Partial<ConsolePanel.IOptions>)
     });
 
@@ -245,8 +243,9 @@ async function activateConsole(
     )).composite as string;
     panel.console.node.dataset.jpInteractionMode = interactionMode;
 
-    // Add the console panel to the tracker and wait for it to be ready.
-    await Promise.all([tracker.add(panel), panel.session.ready]);
+    // Add the console panel to the tracker. We want the panel to show up before
+    // any kernel selection dialog, so we do not await panel.session.ready;
+    await tracker.add(panel);
     panel.session.propertyChanged.connect(() => tracker.save(panel));
 
     shell.add(panel, 'main', {

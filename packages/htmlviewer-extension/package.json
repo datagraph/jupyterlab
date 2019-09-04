@@ -1,6 +1,6 @@
 {
   "name": "@jupyterlab/htmlviewer-extension",
-  "version": "1.0.0-alpha.10",
+  "version": "1.2.0-alpha.0",
   "description": "JupyterLab extension to render HTML files",
   "keywords": [
     "jupyter",
@@ -21,8 +21,12 @@
     "lib/**/*.{d.ts,eot,gif,html,jpg,js,js.map,json,png,svg,woff2,ttf}",
     "style/**/*.{css,eot,gif,html,jpg,json,png,svg,woff2,ttf}"
   ],
+  "sideEffects": [
+    "style/**/*"
+  ],
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
+  "style": "style/index.css",
   "scripts": {
     "build": "tsc -b",
     "clean": "rimraf lib",
@@ -30,10 +34,10 @@
     "watch": "tsc -w"
   },
   "dependencies": {
-    "@jupyterlab/application": "^1.0.0-alpha.9",
-    "@jupyterlab/apputils": "^1.0.0-alpha.9",
-    "@jupyterlab/docregistry": "^1.0.0-alpha.9",
-    "@jupyterlab/htmlviewer": "^1.0.0-alpha.10"
+    "@jupyterlab/application": "^1.2.0-alpha.0",
+    "@jupyterlab/apputils": "^1.2.0-alpha.0",
+    "@jupyterlab/docregistry": "^1.2.0-alpha.0",
+    "@jupyterlab/htmlviewer": "^1.2.0-alpha.0"
   },
   "devDependencies": {
     "rimraf": "~2.6.2",

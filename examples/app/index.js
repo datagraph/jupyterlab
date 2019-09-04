@@ -1,12 +1,13 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
 
-import { PageConfig, URLExt } from '@jupyterlab/coreutils';
+import { PageConfig } from '@jupyterlab/coreutils';
 // eslint-disable-next-line
-__webpack_public_path__ = URLExt.join(
-  PageConfig.getBaseUrl(),
-  'example/static/'
-);
+__webpack_public_path__ = PageConfig.getOption('fullStaticUrl') + '/';
+
+// This must be after the public path is set.
+// This cannot be extracted because the public path is dynamic.
+require('./build/imports.css');
 
 window.addEventListener('load', async function() {
   var JupyterLab = require('@jupyterlab/application').JupyterLab;
@@ -38,7 +39,8 @@ window.addEventListener('load', async function() {
     require('@jupyterlab/terminal-extension'),
     require('@jupyterlab/theme-dark-extension'),
     require('@jupyterlab/theme-light-extension'),
-    require('@jupyterlab/tooltip-extension')
+    require('@jupyterlab/tooltip-extension'),
+    require('@jupyterlab/ui-components-extension')
   ];
   var lab = new JupyterLab();
   lab.registerPluginModules(mods);

@@ -143,7 +143,7 @@ const notebooks: JupyterFrontEndPlugin<void> = {
         const anchor = parent.content;
         const editor = anchor.activeCell.editor;
         const kernel = parent.session.kernel;
-        const rendermime = parent.rendermime;
+        const rendermime = anchor.rendermime;
 
         // If all components necessary for rendering exist, create a tooltip.
         if (!!editor && !!kernel && !!rendermime) {
@@ -301,7 +301,7 @@ namespace Private {
       return Promise.reject(void 0);
     }
 
-    let contents: KernelMessage.IInspectRequest = {
+    let contents: KernelMessage.IInspectRequestMsg['content'] = {
       code,
       cursor_pos: offset,
       detail_level: detail || 0

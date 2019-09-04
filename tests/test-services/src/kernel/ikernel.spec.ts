@@ -11,12 +11,9 @@ import { PromiseDelegate } from '@phosphor/coreutils';
 
 import { Kernel, KernelMessage } from '@jupyterlab/services';
 
-import {
-  expectFailure,
-  KernelTester,
-  handleRequest,
-  testEmission
-} from '../utils';
+import { expectFailure, testEmission } from '@jupyterlab/testutils';
+
+import { KernelTester, handleRequest } from '../utils';
 
 describe('Kernel.IKernel', () => {
   let defaultKernel: Kernel.IKernel;
@@ -254,11 +251,14 @@ describe('Kernel.IKernel', () => {
           if (!KernelMessage.isInputReplyMsg(msg)) {
             throw new Error('Unexpected message');
           }
+          if (msg.content.status !== 'ok') {
+            throw new Error('Message has been changed');
+          }
           expect(msg.content.value).to.equal('foo');
           expect(direction).to.equal('send');
         }
       });
-      kernel.sendInputReply({ value: 'foo' });
+      kernel.sendInputReply({ status: 'ok', value: 'foo' });
       await emission;
     });
   });
@@ -745,6 +745,9 @@ describe('Kernel.IKernel', () => {
   describe('#requestKernelInfo()', () => {
     it('should resolve the promise', async () => {
       const msg = await defaultKernel.requestKernelInfo();
+      if (msg.content.status !== 'ok') {
+        throw new Error('Message error');
+      }
       const name = msg.content.language_info.name;
       expect(name).to.be.ok;
     });
@@ -752,7 +755,7 @@ describe('Kernel.IKernel', () => {
 
   describe('#requestComplete()', () => {
     it('should resolve the promise', async () => {
-      const options: KernelMessage.ICompleteRequest = {
+      const options: KernelMessage.ICompleteRequestMsg['content'] = {
         code: 'hello',
         cursor_pos: 4
       };
@@ -760,7 +763,7 @@ describe('Kernel.IKernel', () => {
     });
 
     it('should reject the promise if the kernel is dead', async () => {
-      const options: KernelMessage.ICompleteRequest = {
+      const options: KernelMessage.ICompleteRequestMsg['content'] = {
         code: 'hello',
         cursor_pos: 4
       };
@@ -780,7 +783,7 @@ describe('Kernel.IKernel', () => {
 
   describe('#requestInspect()', () => {
     it('should resolve the promise', async () => {
-      const options: KernelMessage.IInspectRequest = {
+      const options: KernelMessage.IInspectRequestMsg['content'] = {
         code: 'hello',
         cursor_pos: 4,
         detail_level: 0
@@ -791,7 +794,7 @@ describe('Kernel.IKernel', () => {
 
   describe('#requestIsComplete()', () => {
     it('should resolve the promise', async () => {
-      const options: KernelMessage.IIsCompleteRequest = {
+      const options: KernelMessage.IIsCompleteRequestMsg['content'] = {
         code: 'hello'
       };
       await defaultKernel.requestIsComplete(options);
@@ -800,7 +803,7 @@ describe('Kernel.IKernel', () => {
 
   describe('#requestHistory()', () => {
     it('range messages should resolve the promise', async () => {
-      const options: KernelMessage.IHistoryRequest = {
+      const options: KernelMessage.IHistoryRequestMsg['content'] = {
         output: true,
         raw: true,
         hist_access_type: 'range',
@@ -812,7 +815,7 @@ describe('Kernel.IKernel', () => {
     });
 
     it('tail messages should resolve the promise', async () => {
-      const options: KernelMessage.IHistoryRequest = {
+      const options: KernelMessage.IHistoryRequestMsg['content'] = {
         output: true,
         raw: true,
         hist_access_type: 'tail',
@@ -822,7 +825,7 @@ describe('Kernel.IKernel', () => {
     });
 
     it('search messages should resolve the promise', async () => {
-      const options: KernelMessage.IHistoryRequest = {
+      const options: KernelMessage.IHistoryRequestMsg['content'] = {
         output: true,
         raw: true,
         hist_access_type: 'search',
@@ -843,7 +846,7 @@ describe('Kernel.IKernel', () => {
         expect(msg.header.msg_type).to.equal('input_reply');
         done.resolve(null);
       });
-      kernel.sendInputReply({ value: 'test' });
+      kernel.sendInputReply({ status: 'ok', value: 'test' });
       await done.promise;
       await tester.shutdown();
       tester.dispose();
@@ -860,7 +863,7 @@ describe('Kernel.IKernel', () => {
       tester.sendStatus(UUID.uuid4(), 'dead');
       await dead;
       expect(() => {
-        kernel.sendInputReply({ value: 'test' });
+        kernel.sendInputReply({ status: 'ok', value: 'test' });
       }).to.throw(/Kernel is dead/);
       tester.dispose();
     });
@@ -868,7 +871,7 @@ describe('Kernel.IKernel', () => {
 
   describe('#requestExecute()', () => {
     it('should send and handle incoming messages', async () => {
-      const content: KernelMessage.IExecuteRequest = {
+      const content: KernelMessage.IExecuteRequestMsg['content'] = {
         code: 'test',
         silent: false,
         store_history: true,
@@ -882,7 +885,7 @@ describe('Kernel.IKernel', () => {
         session: defaultKernel.clientId
       };
 
-      let future: Kernel.IFuture;
+      let future: Kernel.IShellFuture;
       const tester = new KernelTester();
 
       tester.onMessage(msg => {
@@ -896,7 +899,8 @@ describe('Kernel.IKernel', () => {
             channel: 'shell',
             content: {
               execution_count: 1,
-              status: 'ok'
+              status: 'ok',
+              user_expressions: {}
             },
             parentHeader: msg.header as KernelMessage.IExecuteRequestMsg['header']
           })
@@ -958,7 +962,7 @@ describe('Kernel.IKernel', () => {
     });
 
     it('should not dispose of KernelFuture when disposeOnDone=false', async () => {
-      const options: KernelMessage.IExecuteRequest = {
+      const options: KernelMessage.IExecuteRequestMsg['content'] = {
         code: 'test',
         silent: false,
         store_history: true,
@@ -976,7 +980,7 @@ describe('Kernel.IKernel', () => {
 
   describe('#checkExecuteMetadata()', () => {
     it('should accept cell metadata as part of request', async () => {
-      let options: KernelMessage.IExecuteRequest = {
+      let options: KernelMessage.IExecuteRequestMsg['content'] = {
         code: 'test',
         silent: false,
         store_history: true,
@@ -993,7 +997,7 @@ describe('Kernel.IKernel', () => {
 
   describe('#registerMessageHook()', () => {
     it('should have the most recently registered hook run first', async () => {
-      const options: KernelMessage.IExecuteRequest = {
+      const options: KernelMessage.IExecuteRequestMsg['content'] = {
         code: 'test',
         silent: false,
         store_history: true,
@@ -1002,7 +1006,7 @@ describe('Kernel.IKernel', () => {
         stop_on_error: false
       };
       const calls: string[] = [];
-      let future: Kernel.IFuture;
+      let future: Kernel.IShellFuture;
 
       let kernel: Kernel.IKernel;
 
@@ -1079,7 +1083,7 @@ describe('Kernel.IKernel', () => {
     });
 
     it('should abort processing if a hook returns false, but the done logic should still work', async () => {
-      const options: KernelMessage.IExecuteRequest = {
+      const options: KernelMessage.IExecuteRequestMsg['content'] = {
         code: 'test',
         silent: false,
         store_history: true,
@@ -1090,7 +1094,7 @@ describe('Kernel.IKernel', () => {
       const calls: string[] = [];
 
       const tester = new KernelTester();
-      let future: Kernel.IFuture;
+      let future: Kernel.IShellFuture;
       let kernel: Kernel.IKernel;
 
       tester.onMessage(message => {
@@ -1156,7 +1160,7 @@ describe('Kernel.IKernel', () => {
     });
 
     it('should process additions on the next run', async () => {
-      const options: KernelMessage.IExecuteRequest = {
+      const options: KernelMessage.IExecuteRequestMsg['content'] = {
         code: 'test',
         silent: false,
         store_history: true,
@@ -1166,7 +1170,7 @@ describe('Kernel.IKernel', () => {
       };
       const calls: string[] = [];
       const tester = new KernelTester();
-      let future: Kernel.IFuture;
+      let future: Kernel.IShellFuture;
       let kernel: Kernel.IKernel;
 
       tester.onMessage(message => {
@@ -1229,7 +1233,7 @@ describe('Kernel.IKernel', () => {
     });
 
     it('should deactivate a hook immediately on removal', async () => {
-      const options: KernelMessage.IExecuteRequest = {
+      const options: KernelMessage.IExecuteRequestMsg['content'] = {
         code: 'test',
         silent: false,
         store_history: true,
@@ -1239,7 +1243,7 @@ describe('Kernel.IKernel', () => {
       };
       const calls: string[] = [];
       const tester = new KernelTester();
-      let future: Kernel.IFuture;
+      let future: Kernel.IShellFuture;
       let kernel: Kernel.IKernel;
 
       tester.onMessage(message => {
@@ -1319,7 +1323,7 @@ describe('Kernel.IKernel', () => {
     // old session, the comm open should be canceled.
 
     it('should run handlers in order', async () => {
-      const options: KernelMessage.IExecuteRequest = {
+      const options: KernelMessage.IExecuteRequestMsg['content'] = {
         code: 'test',
         silent: false,
         store_history: true,
@@ -1432,7 +1436,8 @@ describe('Kernel.IKernel', () => {
         pushReply(
           tester.sendExecuteReply('execute reply', {
             status: 'ok',
-            execution_count: 1
+            execution_count: 1,
+            user_expressions: {}
           })
         );
 

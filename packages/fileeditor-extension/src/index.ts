@@ -7,7 +7,7 @@ import {
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
 
-import { ICommandPalette, InstanceTracker } from '@jupyterlab/apputils';
+import { ICommandPalette, WidgetTracker } from '@jupyterlab/apputils';
 
 import { CodeEditor, IEditorServices } from '@jupyterlab/codeeditor';
 
@@ -49,7 +49,7 @@ import { Menu } from '@phosphor/widgets';
 /**
  * The class name for the text editor icon from the default theme.
  */
-const EDITOR_ICON_CLASS = 'jp-TextEditorIcon';
+const EDITOR_ICON_CLASS = 'jp-MaterialIcon jp-TextEditorIcon';
 
 /**
  * The class name for the text editor icon from the default theme.
@@ -114,13 +114,18 @@ const plugin: JupyterFrontEndPlugin<IEditorTracker> = {
 export const tabSpaceStatus: JupyterFrontEndPlugin<void> = {
   id: '@jupyterlab/fileeditor-extension:tab-space-status',
   autoStart: true,
-  requires: [IStatusBar, IEditorTracker, ISettingRegistry],
+  requires: [IEditorTracker, ISettingRegistry],
+  optional: [IStatusBar],
   activate: (
     app: JupyterFrontEnd,
-    statusBar: IStatusBar,
     editorTracker: IEditorTracker,
-    settingRegistry: ISettingRegistry
+    settingRegistry: ISettingRegistry,
+    statusBar: IStatusBar | null
   ) => {
+    if (!statusBar) {
+      // Automatically disable if statusbar missing
+      return;
+    }
     // Create a menu for switching tabs vs spaces.
     const menu = new Menu({ commands: app.commands });
     const command = 'fileeditor:change-tabs';
@@ -204,7 +209,7 @@ function activate(
     }
   });
   const { commands, restored, shell } = app;
-  const tracker = new InstanceTracker<IDocumentWidget<FileEditor>>({
+  const tracker = new WidgetTracker<IDocumentWidget<FileEditor>>({
     namespace
   });
   const isEnabled = () =>
@@ -215,7 +220,7 @@ function activate(
 
   // Handle state restoration.
   if (restorer) {
-    restorer.restore(tracker, {
+    void restorer.restore(tracker, {
       command: 'docmanager:open',
       args: widget => ({ path: widget.context.path, factory: FACTORY }),
       name: widget => widget.context.path
@@ -273,7 +278,7 @@ function activate(
   factory.widgetCreated.connect((sender, widget) => {
     widget.title.icon = EDITOR_ICON_CLASS;
 
-    // Notify the instance tracker if restore data needs to update.
+    // Notify the widget tracker if restore data needs to update.
     widget.context.pathChanged.connect(() => {
       void tracker.save(widget);
     });

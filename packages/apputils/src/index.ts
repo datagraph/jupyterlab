@@ -1,8 +1,6 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
 
-import '../style/index.css';
-
 export * from './clientsession';
 export * from './clipboard';
 export * from './collapse';
@@ -13,7 +11,6 @@ export * from './domutils';
 export * from './hoverbox';
 export * from './iframe';
 export * from './inputdialog';
-export * from './instancetracker';
 export * from './mainareawidget';
 export * from './printing';
 export * from './sanitizer';
@@ -24,4 +21,5 @@ export * from './thememanager';
 export * from './tokens';
 export * from './toolbar';
 export * from './vdom';
+export * from './widgettracker';
 export * from './windowresolver';

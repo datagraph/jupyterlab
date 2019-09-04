@@ -39,7 +39,7 @@ def load_config(nbapp):
 
     app_dir = getattr(nbapp, 'app_dir', get_app_dir())
     info = get_app_info(app_dir)
-    public_url = info['publicUrl']
+    static_url = info['staticUrl']
     user_settings_dir = getattr(
         nbapp, 'user_settings_dir', get_user_settings_dir()
     )
@@ -59,13 +59,13 @@ def load_config(nbapp):
     config.workspaces_dir = workspaces_dir
 
     if getattr(nbapp, 'override_static_url', ''):
-        public_url = nbapp.override_static_url
+        static_url = nbapp.override_static_url
     if getattr(nbapp, 'override_theme_url', ''):
         config.themes_url = nbapp.override_theme_url
         config.themes_dir = ''
 
-    if public_url:
-        config.public_url = public_url
+    if static_url:
+        config.static_url = static_url
     else:
         config.static_dir = pjoin(app_dir, 'static')
 
@@ -119,7 +119,9 @@ def load_jupyter_server_extension(nbapp):
     config = load_config(nbapp)
     config.app_name = 'JupyterLab'
     config.app_namespace = 'jupyterlab'
-    config.page_url = '/lab'
+
+    config.app_url = '/lab'
+
     config.cache_files = True
 
     # Check for watch.
@@ -139,13 +141,9 @@ def load_jupyter_server_extension(nbapp):
     page_config['devMode'] = dev_mode
     page_config['token'] = nbapp.token
 
-    # Export the version info tuple to a JSON array. This gets printed
-    # inside double quote marks, so we render it to a JSON string of the
-    # JSON data (so that we can call JSON.parse on the frontend on it).
-    # We also have to wrap it in `Markup` so that it isn't escaped
-    # by Jinja. Otherwise, if the version has string parts these will be
-    # escaped and then will have to be unescaped on the frontend.
-    page_config['notebookVersion'] = Markup(dumps(dumps(version_info))[1:-1])
+    # Client-side code assumes notebookVersion is a JSON-encoded string
+    # TODO: fix this when we can make such a change
+    page_config['notebookVersion'] = dumps(version_info)
 
     if nbapp.file_to_run and type(nbapp).__name__ == "LabApp":
         relpath = os.path.relpath(nbapp.file_to_run, nbapp.notebook_dir)
@@ -203,6 +201,17 @@ def load_jupyter_server_extension(nbapp):
 
     # Must add before the root server handlers to avoid shadowing.
     web_app.add_handlers('.*$', handlers)
+
+    # If running under JupyterHub, add more metadata.
+    if hasattr(nbapp, 'hub_prefix'):
+        page_config['hubPrefix'] = nbapp.hub_prefix
+        page_config['hubHost'] = nbapp.hub_host
+        page_config['hubUser'] = nbapp.user
+        # Assume the server_name property indicates running JupyterHub 1.0.
+        if hasattr(nbapp, 'server_name'):
+            page_config['hubServerName'] = nbapp.server_name
+        api_token = os.getenv('JUPYTERHUB_API_TOKEN', '')
+        page_config['token'] = api_token
 
     # Add the root handlers if we have not errored.
     if not errored:

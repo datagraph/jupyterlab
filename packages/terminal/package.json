@@ -1,6 +1,6 @@
 {
   "name": "@jupyterlab/terminal",
-  "version": "1.0.0-alpha.9",
+  "version": "1.2.0-alpha.0",
   "description": "JupyterLab - Terminal Emulator Widget",
   "homepage": "https://github.com/jupyterlab/jupyterlab",
   "bugs": {
@@ -18,8 +18,12 @@
     "lib/*.js",
     "style/*.css"
   ],
+  "sideEffects": [
+    "style/*.css"
+  ],
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
+  "style": "style/index.css",
   "directories": {
     "lib": "lib/"
   },
@@ -31,12 +35,12 @@
     "watch": "tsc -b --watch"
   },
   "dependencies": {
-    "@jupyterlab/apputils": "^1.0.0-alpha.9",
-    "@jupyterlab/services": "^4.0.0-alpha.9",
-    "@phosphor/coreutils": "^1.3.0",
-    "@phosphor/domutils": "^1.1.2",
-    "@phosphor/messaging": "^1.2.2",
-    "@phosphor/widgets": "^1.7.0",
+    "@jupyterlab/apputils": "^1.2.0-alpha.0",
+    "@jupyterlab/services": "^4.2.0-alpha.0",
+    "@phosphor/coreutils": "^1.3.1",
+    "@phosphor/domutils": "^1.1.3",
+    "@phosphor/messaging": "^1.2.3",
+    "@phosphor/widgets": "^1.8.0",
     "xterm": "~3.13.2"
   },
   "devDependencies": {
@@ -46,5 +50,12 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "jupyterlab": {
+    "extraStyles": {
+      "xterm": [
+        "src/xterm.css"
+      ]
+    }
   }
 }

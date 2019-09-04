@@ -9,7 +9,7 @@ import {
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
 
-import { ICommandPalette, InstanceTracker } from '@jupyterlab/apputils';
+import { ICommandPalette, WidgetTracker } from '@jupyterlab/apputils';
 
 import { DocumentRegistry } from '@jupyterlab/docregistry';
 
@@ -20,11 +20,9 @@ import {
 } from '@jupyterlab/htmlviewer';
 
 /**
- * The CSS class for an HTML5 icon.
+ * The name for an HTML5 icon.
  */
-const CSS_ICON_CLASS = 'jp-MaterialIcon jp-HTMLIcon';
-
-import '../style/index.css';
+const ICON_NAME = 'html5';
 
 /**
  * Command IDs used by the plugin.
@@ -60,7 +58,7 @@ function activateHTMLViewer(
     displayName: 'HTML File',
     extensions: ['.html'],
     mimeTypes: ['text/html'],
-    iconClass: CSS_ICON_CLASS
+    iconClass: ICON_NAME
   };
   app.docRegistry.addFileType(ft);
 
@@ -72,14 +70,14 @@ function activateHTMLViewer(
     readOnly: true
   });
 
-  // Create an instance tracker for HTML documents.
-  const tracker = new InstanceTracker<HTMLViewer>({
+  // Create a widget tracker for HTML documents.
+  const tracker = new WidgetTracker<HTMLViewer>({
     namespace: 'htmlviewer'
   });
 
   // Handle state restoration.
   if (restorer) {
-    restorer.restore(tracker, {
+    void restorer.restore(tracker, {
       command: 'docmanager:open',
       args: widget => ({ path: widget.context.path, factory: 'HTML Viewer' }),
       name: widget => widget.context.path
@@ -90,7 +88,7 @@ function activateHTMLViewer(
   factory.widgetCreated.connect((sender, widget) => {
     // Track the widget.
     void tracker.add(widget);
-    // Notify the instance tracker if restore data needs to update.
+    // Notify the widget tracker if restore data needs to update.
     widget.context.pathChanged.connect(() => {
       void tracker.save(widget);
     });
@@ -100,6 +98,7 @@ function activateHTMLViewer(
       app.commands.notifyCommandChanged(CommandIDs.trustHTML);
     });
 
+    // widget.node.appendChild(HTML5Icon);
     widget.title.iconClass = ft.iconClass;
     widget.title.iconLabel = ft.iconLabel;
   });

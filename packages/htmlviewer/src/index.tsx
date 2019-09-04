@@ -5,7 +5,7 @@
 
 import {
   IFrame,
-  IInstanceTracker,
+  IWidgetTracker,
   ReactWidget,
   ToolbarButton,
   ToolbarButtonComponent,
@@ -27,12 +27,10 @@ import { ISignal, Signal } from '@phosphor/signaling';
 
 import * as React from 'react';
 
-import '../style/index.css';
-
 /**
  * A class that tracks HTML viewer widgets.
  */
-export interface IHTMLViewerTracker extends IInstanceTracker<HTMLViewer> {}
+export interface IHTMLViewerTracker extends IWidgetTracker<HTMLViewer> {}
 
 /**
  * The HTML viewer tracker token.

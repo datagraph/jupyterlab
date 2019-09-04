@@ -10,8 +10,8 @@ import {
 
 import {
   ICommandPalette,
-  InstanceTracker,
-  MainAreaWidget
+  MainAreaWidget,
+  WidgetTracker
 } from '@jupyterlab/apputils';
 
 import { IConsoleTracker } from '@jupyterlab/console';
@@ -50,10 +50,9 @@ const inspector: JupyterFrontEndPlugin<IInspector> = {
   ): IInspector => {
     const { commands, shell } = app;
     const command = CommandIDs.open;
-    const label = 'Open Inspector';
-    const title = 'Inspector';
+    const label = 'Contextual Help';
     const namespace = 'inspector';
-    const tracker = new InstanceTracker<MainAreaWidget<InspectorPanel>>({
+    const tracker = new WidgetTracker<MainAreaWidget<InspectorPanel>>({
       namespace
     });
 
@@ -63,7 +62,7 @@ const inspector: JupyterFrontEndPlugin<IInspector> = {
       if (!inspector || inspector.isDisposed) {
         inspector = new MainAreaWidget({ content: new InspectorPanel() });
         inspector.id = 'jp-inspector';
-        inspector.title.label = title;
+        inspector.title.label = label;
         void tracker.add(inspector);
         source = source && !source.isDisposed ? source : null;
         inspector.content.source = source;
@@ -83,7 +82,7 @@ const inspector: JupyterFrontEndPlugin<IInspector> = {
         inspector.isDisposed ||
         !inspector.isAttached ||
         !inspector.isVisible,
-      label: args => (args.isLauncher ? title : label),
+      label,
       iconClass: args =>
         args.isLauncher ? 'jp-MaterialIcon jp-InspectorIcon' : '',
       execute: () => openInspector()
@@ -91,7 +90,7 @@ const inspector: JupyterFrontEndPlugin<IInspector> = {
 
     // Add command to UI where possible.
     if (palette) {
-      palette.addItem({ command, category: title });
+      palette.addItem({ command, category: label });
     }
     if (launcher) {
       launcher.add({ command, args: { isLauncher: true } });
@@ -99,11 +98,7 @@ const inspector: JupyterFrontEndPlugin<IInspector> = {
 
     // Handle state restoration.
     if (restorer) {
-      restorer.restore(tracker, {
-        command,
-        args: () => null,
-        name: () => 'inspector'
-      });
+      void restorer.restore(tracker, { command, name: () => 'inspector' });
     }
 
     // Create a proxy to pass the `source` to the current inspector.
@@ -202,7 +197,7 @@ const notebooks: JupyterFrontEndPlugin<void> = {
     // Create a handler for each notebook that is created.
     notebooks.widgetAdded.connect((sender, parent) => {
       const session = parent.session;
-      const rendermime = parent.rendermime;
+      const rendermime = parent.content.rendermime;
       const connector = new KernelConnector({ session });
       const handler = new InspectionHandler({ connector, rendermime });
 

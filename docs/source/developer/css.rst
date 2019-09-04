@@ -1,3 +1,5 @@
+.. _css:
+
 CSS Patterns
 ------------
 
@@ -15,7 +17,7 @@ CSS checklist
    subdirectory and imported into the plugin's ``index.css``.
 -  The JupyterLab default CSS variables in the ``theme-light-extension``
    and ``theme-dark-extension`` packages are used to style packages
-   where ever possible. Individual packages should not npm-depend on
+   wherever possible. Individual packages should not npm-depend on
    these packages though, to enable the theme to be swapped out.
 -  Additional public/private CSS variables are defined by plugins
    sparingly and in accordance with the conventions described below.
@@ -90,9 +92,16 @@ We are organizing our CSS files in the following manner:
 -  Each package in the top-level ``packages`` directory should contain
    any CSS files in a ``style`` subdirectory that are needed to style
    itself.
--  Multiple CSS files may be used and organized as needed, but they
-   should be imported into a single ``index.css`` at the top-level of
-   the plugin as `import '../style/index.css';`.
+-  All local styles should be consolidated into a ``style/base.css`` file.
+-  The top level ``index.css`` file is templated by ``buildutils`` as
+   part of the ``integrity`` script.  It imports the CSS in dependency order,
+   ending with the local ``./base.css``.  CSS from external libraries is
+   determined by their ``style`` field in ``package.json``.  If additional
+   files are desired or the external library does not have a ``style`` field,
+   we use the ``jupyterlab: { "extraStyles": { "fooLibrary": ["path/to/css"] } }``
+   pattern in our ``package.json`` to declare them.  For imports that should not be added to ``index.css`, update ``SKIP_CSS`` in ``buildutils/src/ensure-repo.ts``.
+
+
 
 CSS class names
 ~~~~~~~~~~~~~~~
@@ -195,11 +204,13 @@ only the desired children.
 When in doubt, there is little harm done in parents adding selectors to
 children.
 
+.. _css-selectors:
+
 Commonly used CSS selectors
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 We use CSS selectors to decide which context menu items to display and what command
-to invoke when a keyboard shortcut is used. The following common CSS selectors are 
+to invoke when a keyboard shortcut is used. The following common CSS selectors are
 intended to be used for adding context menu items and keyboard shortcuts.
 
 **CSS classes that target widgets and their children**

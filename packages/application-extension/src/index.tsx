@@ -2,12 +2,12 @@
 // Distributed under the terms of the Modified BSD License.
 
 import {
-  ConnectionLost,
   IConnectionLost,
   ILabShell,
   ILabStatus,
   ILayoutRestorer,
   IRouter,
+  ConnectionLost,
   JupyterFrontEnd,
   JupyterFrontEndPlugin,
   JupyterLab,
@@ -75,13 +75,14 @@ namespace CommandIDs {
  */
 const main: JupyterFrontEndPlugin<void> = {
   id: '@jupyterlab/application-extension:main',
-  requires: [ICommandPalette, IConnectionLost, IRouter, IWindowResolver],
+  requires: [ICommandPalette, IRouter, IWindowResolver],
+  optional: [IConnectionLost],
   activate: (
     app: JupyterFrontEnd,
     palette: ICommandPalette,
-    connectionLost: IConnectionLost,
     router: IRouter,
-    resolver: IWindowResolver
+    resolver: IWindowResolver,
+    connectionLost: IConnectionLost | undefined
   ) => {
     if (!(app instanceof JupyterLab)) {
       throw new Error(`${main.id} must be activated in JupyterLab.`);
@@ -112,7 +113,8 @@ const main: JupyterFrontEndPlugin<void> = {
     });
 
     // If the connection to the server is lost, handle it with the
-    // connection lost token.
+    // connection lost handler.
+    connectionLost = connectionLost || ConnectionLost;
     app.serviceManager.connectionFailure.connect(connectionLost);
 
     const builder = app.serviceManager.builder;
@@ -125,7 +127,7 @@ const main: JupyterFrontEndPlugin<void> = {
             body: 'Build successfully completed, reload page?',
             buttons: [
               Dialog.cancelButton(),
-              Dialog.warnButton({ label: 'RELOAD' })
+              Dialog.warnButton({ label: 'Reload' })
             ]
           });
         })
@@ -162,7 +164,7 @@ const main: JupyterFrontEndPlugin<void> = {
         void showDialog({
           title: 'Build Recommended',
           body,
-          buttons: [Dialog.cancelButton(), Dialog.okButton({ label: 'BUILD' })]
+          buttons: [Dialog.cancelButton(), Dialog.okButton({ label: 'Build' })]
         }).then(result => (result.button.accept ? build() : undefined));
       });
     }
@@ -194,7 +196,7 @@ const layout: JupyterFrontEndPlugin<ILayoutRestorer> = {
   activate: (app: JupyterFrontEnd, state: IStateDB, labShell: ILabShell) => {
     const first = app.started;
     const registry = app.commands;
-    const restorer = new LayoutRestorer({ first, registry, state });
+    const restorer = new LayoutRestorer({ connector: state, first, registry });
 
     void restorer.fetch().then(saved => {
       labShell.restoreLayout(saved);
@@ -260,23 +262,26 @@ const tree: JupyterFrontEndPlugin<void> = {
         const treeMatch = args.path.match(treePattern);
         const workspaceMatch = args.path.match(workspacePattern);
         const match = treeMatch || workspaceMatch;
-        const path = decodeURI(match[1]);
+        let path = decodeURI(match[1]);
         // const { page, workspaces } = info.urls;
         const workspace = PathExt.basename(resolver.name);
         const url =
           (workspaceMatch
             ? URLExt.join(paths.urls.workspaces, workspace)
-            : paths.urls.page) +
+            : paths.urls.app) +
           args.search +
           args.hash;
-        const immediate = true;
 
         // Remove the tree portion of the URL leaving the rest intact.
         router.navigate(url);
 
+        const query = URLExt.queryStringToObject(args.search);
+        if (query['file-browser-path']) {
+          path = query['file-browser-path'];
+        }
+
         try {
-          await commands.execute('filebrowser:navigate', { path });
-          await commands.execute('apputils:save-statedb', { immediate });
+          await commands.execute('filebrowser:open-path', { path });
         } catch (error) {
           console.warn('Tree routing failed.', error);
         }
@@ -395,10 +400,8 @@ const sidebar: JupyterFrontEndPlugin<void> = {
     app.commands.addCommand(CommandIDs.switchSidebar, {
       label: 'Switch Sidebar Side',
       execute: () => {
-        // First, try to find the right panel based on the
-        // application context menu click,
-        // If we can't find it there, look for use the active
-        // left/right widgets.
+        // First, try to find the correct panel based on the
+        // application context menu click.
         const contextNode: HTMLElement = app.contextMenuHitTest(
           node => !!node.dataset.id
         );
@@ -413,14 +416,10 @@ const sidebar: JupyterFrontEndPlugin<void> = {
           } else {
             side = 'left';
           }
-        } else if (document.body.dataset.leftSidebarWidget) {
-          id = document.body.dataset.leftSidebarWidget;
-          side = 'right';
-        } else if (document.body.dataset.rightSidebarWidget) {
-          id = document.body.dataset.rightSidebarWidget;
-          side = 'left';
+        } else {
+          // Bail if we don't find a sidebar for the widget.
+          return;
         }
-
         // Move the panel to the other side.
         const newOverrides = { ...overrides };
         newOverrides[id] = side;
@@ -538,6 +537,12 @@ function addCommands(app: JupyterLab, palette: ICommandPalette): void {
   });
   palette.addItem({ command: CommandIDs.activatePreviousTab, category });
 
+  // A CSS selector targeting tabs in the main area. This is a very
+  // specific selector since we really only want tabs that are
+  // in the main area, as opposed to those in sidebars, ipywidgets, etc.
+  const tabSelector =
+    '#jp-main-dock-panel .p-DockPanel-tabBar.jp-Activity .p-TabBar-tab';
+
   commands.addCommand(CommandIDs.close, {
     label: () => 'Close Tab',
     isEnabled: () =>
@@ -551,7 +556,7 @@ function addCommands(app: JupyterLab, palette: ICommandPalette): void {
   palette.addItem({ command: CommandIDs.close, category });
   contextMenu.addItem({
     command: CommandIDs.close,
-    selector: '.p-TabBar-tab',
+    selector: tabSelector,
     rank: 4
   });
 
@@ -564,7 +569,7 @@ function addCommands(app: JupyterLab, palette: ICommandPalette): void {
   palette.addItem({ command: CommandIDs.closeAll, category });
 
   commands.addCommand(CommandIDs.closeOtherTabs, {
-    label: () => `Close Other Tabs`,
+    label: () => `Close All Other Tabs`,
     isEnabled: () => {
       // Ensure there are at least two widgets.
       const iterator = shell.widgets('main');
@@ -585,7 +590,7 @@ function addCommands(app: JupyterLab, palette: ICommandPalette): void {
   palette.addItem({ command: CommandIDs.closeOtherTabs, category });
   contextMenu.addItem({
     command: CommandIDs.closeOtherTabs,
-    selector: '.p-TabBar-tab',
+    selector: tabSelector,
     rank: 4
   });
 
@@ -604,7 +609,7 @@ function addCommands(app: JupyterLab, palette: ICommandPalette): void {
   palette.addItem({ command: CommandIDs.closeRightTabs, category });
   contextMenu.addItem({
     command: CommandIDs.closeRightTabs,
-    selector: '.p-TabBar-tab',
+    selector: tabSelector,
     rank: 5
   });
 
@@ -747,19 +752,6 @@ const paths: JupyterFrontEndPlugin<JupyterFrontEnd.IPaths> = {
 };
 
 /**
- * The default JupyterLab connection lost provider. This may be overridden
- * to provide custom behavior when a connection to the server is lost.
- */
-const connectionlost: JupyterFrontEndPlugin<IConnectionLost> = {
-  id: '@jupyterlab/apputils-extension:connectionlost',
-  activate: (app: JupyterFrontEnd): IConnectionLost => {
-    return ConnectionLost;
-  },
-  autoStart: true,
-  provides: IConnectionLost
-};
-
-/**
  * Export the plugins as default.
  */
 const plugins: JupyterFrontEndPlugin<any>[] = [
@@ -773,8 +765,7 @@ const plugins: JupyterFrontEndPlugin<any>[] = [
   shell,
   status,
   info,
-  paths,
-  connectionlost
+  paths
 ];
 
 export default plugins;

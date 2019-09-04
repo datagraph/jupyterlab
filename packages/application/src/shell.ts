@@ -5,6 +5,8 @@ import { Debouncer } from '@jupyterlab/coreutils';
 
 import { DocumentRegistry } from '@jupyterlab/docregistry';
 
+import { DockPanelSvg, TabBarSvg } from '@jupyterlab/ui-components';
+
 import { ArrayExt, find, IIterator, iter, toArray } from '@phosphor/algorithm';
 
 import { PromiseDelegate, Token } from '@phosphor/coreutils';
@@ -53,11 +55,6 @@ const ACTIVE_CLASS = 'jp-mod-active';
  * The default rank of items added to a sidebar.
  */
 const DEFAULT_RANK = 500;
-
-/**
- * The data attribute added to the document body indicating shell's mode.
- */
-const MODE_ATTRIBUTE = 'data-shell-mode';
 
 const ACTIVITY_CLASS = 'jp-Activity';
 
@@ -181,7 +178,9 @@ export class LabShell extends Widget implements JupyterFrontEnd.IShell {
     let bottomPanel = (this._bottomPanel = new BoxPanel());
     let topPanel = (this._topPanel = new Panel());
     let hboxPanel = new BoxPanel();
-    let dockPanel = (this._dockPanel = new DockPanel());
+    let dockPanel = (this._dockPanel = new DockPanelSvg({
+      kind: 'dockPanelBar'
+    }));
     let headerPanel = (this._headerPanel = new Panel());
     MessageLoop.installMessageHook(dockPanel, this._dockChildHook);
 
@@ -361,8 +360,8 @@ export class LabShell extends Widget implements JupyterFrontEnd.IShell {
         dock.activateWidget(this.currentWidget);
       }
 
-      // Set the mode data attribute on the document body.
-      document.body.setAttribute(MODE_ATTRIBUTE, mode);
+      // Set the mode data attribute on the application shell node.
+      this.node.dataset.shellMode = mode;
       return;
     }
 
@@ -401,8 +400,8 @@ export class LabShell extends Widget implements JupyterFrontEnd.IShell {
       dock.activateWidget(applicationCurrentWidget);
     }
 
-    // Set the mode data attribute on the document body.
-    document.body.setAttribute(MODE_ATTRIBUTE, mode);
+    // Set the mode data attribute on the applications shell node.
+    this.node.dataset.shellMode = mode;
   }
 
   /**
@@ -694,7 +693,7 @@ export class LabShell extends Widget implements JupyterFrontEnd.IShell {
    * Handle `after-attach` messages for the application shell.
    */
   protected onAfterAttach(msg: Message): void {
-    document.body.setAttribute(MODE_ATTRIBUTE, this.mode);
+    this.node.dataset.shellMode = this.mode;
   }
 
   /**
@@ -742,7 +741,7 @@ export class LabShell extends Widget implements JupyterFrontEnd.IShell {
 
     const dock = this._dockPanel;
     const mode = options.mode || 'tab-after';
-    let ref: Widget | null = null;
+    let ref: Widget | null = this.currentWidget;
 
     if (options.ref) {
       ref = find(dock.widgets(), value => value.id === options.ref!) || null;
@@ -1033,8 +1032,8 @@ namespace Private {
      * Construct a new side bar handler.
      */
     constructor(side: string) {
-      this._side = side;
-      this._sideBar = new TabBar<Widget>({
+      this._sideBar = new TabBarSvg<Widget>({
+        kind: 'sideBar',
         insertBehavior: 'none',
         removeBehavior: 'none',
         allowDeselect: true
@@ -1205,12 +1204,6 @@ namespace Private {
         newWidget.show();
       }
       this._lastCurrent = newWidget || oldWidget;
-      if (newWidget) {
-        const id = newWidget.id;
-        document.body.setAttribute(`data-${this._side}-sidebar-widget`, id);
-      } else {
-        document.body.removeAttribute(`data-${this._side}-sidebar-widget`);
-      }
       this._refreshVisibility();
     }
 
@@ -1237,7 +1230,6 @@ namespace Private {
     }
 
     private _items = new Array<Private.IRankItem>();
-    private _side: string;
     private _sideBar: TabBar<Widget>;
     private _stackedPanel: StackedPanel;
     private _lastCurrent: Widget | null;

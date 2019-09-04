@@ -9,6 +9,8 @@ import {
 
 import { Message } from '@phosphor/messaging';
 
+import { AttachedProperty } from '@phosphor/properties';
+
 import { Signal } from '@phosphor/signaling';
 
 import { Panel, PanelLayout } from '@phosphor/widgets';
@@ -144,7 +146,7 @@ export class OutputArea extends Widget {
   /**
    * The kernel future associated with the output area.
    */
-  get future(): Kernel.IFuture<
+  get future(): Kernel.IShellFuture<
     KernelMessage.IExecuteRequestMsg,
     KernelMessage.IExecuteReplyMsg
   > | null {
@@ -152,7 +154,7 @@ export class OutputArea extends Widget {
   }
 
   set future(
-    value: Kernel.IFuture<
+    value: Kernel.IShellFuture<
       KernelMessage.IExecuteRequestMsg,
       KernelMessage.IExecuteReplyMsg
     > | null
@@ -284,7 +286,7 @@ export class OutputArea extends Widget {
    */
   protected onInputRequest(
     msg: KernelMessage.IInputRequestMsg,
-    future: Kernel.IFuture
+    future: Kernel.IShellFuture
   ): void {
     // Add an output widget to the end.
     let factory = this.contentFactory;
@@ -330,7 +332,19 @@ export class OutputArea extends Widget {
     let renderer = (panel.widgets
       ? panel.widgets[1]
       : panel) as IRenderMime.IRenderer;
-    if (renderer.renderModel) {
+    // Check whether it is safe to reuse renderer:
+    // - Preferred mime type has not changed
+    // - Isolation has not changed
+    let mimeType = this.rendermime.preferredMimeType(
+      model.data,
+      model.trusted ? 'any' : 'ensure'
+    );
+    if (
+      renderer.renderModel &&
+      Private.currentPreferredMimetype.get(renderer) === mimeType &&
+      OutputArea.isIsolated(mimeType, model.metadata) ===
+        renderer instanceof Private.IsolatedRenderer
+    ) {
       void renderer.renderModel(model);
     } else {
       layout.widgets[index].dispose();
@@ -343,7 +357,11 @@ export class OutputArea extends Widget {
    */
   private _insertOutput(index: number, model: IOutputModel): void {
     let output = this.createOutputItem(model);
-    output.toggleClass(EXECUTE_CLASS, model.executionCount !== null);
+    if (output) {
+      output.toggleClass(EXECUTE_CLASS, model.executionCount !== null);
+    } else {
+      output = new Widget();
+    }
     let layout = this.layout as PanelLayout;
     layout.insertWidget(index, output);
   }
@@ -351,8 +369,15 @@ export class OutputArea extends Widget {
   /**
    * Create an output item with a prompt and actual output
    */
-  protected createOutputItem(model: IOutputModel): Widget {
+  protected createOutputItem(model: IOutputModel): Widget | null {
+    let output = this.createRenderedMimetype(model);
+
+    if (!output) {
+      return null;
+    }
+
     let panel = new Panel();
+
     panel.addClass(OUTPUT_AREA_ITEM_CLASS);
 
     let prompt = this.contentFactory.createOutputPrompt();
@@ -360,60 +385,43 @@ export class OutputArea extends Widget {
     prompt.addClass(OUTPUT_AREA_PROMPT_CLASS);
     panel.addWidget(prompt);
 
-    let output = this.createRenderedMimetype(model);
     output.addClass(OUTPUT_AREA_OUTPUT_CLASS);
     panel.addWidget(output);
-
     return panel;
   }
 
   /**
    * Render a mimetype
    */
-  protected createRenderedMimetype(model: IOutputModel): Widget {
-    let widget: Widget;
+  protected createRenderedMimetype(model: IOutputModel): Widget | null {
     let mimeType = this.rendermime.preferredMimeType(
       model.data,
       model.trusted ? 'any' : 'ensure'
     );
-    if (mimeType) {
-      let metadata = model.metadata;
-      let mimeMd = metadata[mimeType] as ReadonlyJSONObject;
-      let isolated = false;
-      // mime-specific higher priority
-      if (mimeMd && mimeMd['isolated'] !== undefined) {
-        isolated = mimeMd['isolated'] as boolean;
-      } else {
-        // fallback on global
-        isolated = metadata['isolated'] as boolean;
-      }
 
-      let output = this.rendermime.createRenderer(mimeType);
-      if (isolated === true) {
-        output = new Private.IsolatedRenderer(output);
-      }
-      output.renderModel(model).catch(error => {
-        // Manually append error message to output
-        const pre = document.createElement('pre');
-        pre.textContent = `Javascript Error: ${error.message}`;
-        output.node.appendChild(pre);
-
-        // Remove mime-type-specific CSS classes
-        output.node.className = 'p-Widget jp-RenderedText';
-        output.node.setAttribute(
-          'data-mime-type',
-          'application/vnd.jupyter.stderr'
-        );
-      });
-      widget = output;
-    } else {
-      widget = new Widget();
-      widget.node.innerHTML =
-        `No ${model.trusted ? '' : '(safe) '}renderer could be ` +
-        'found for output. It has the following MIME types: ' +
-        Object.keys(model.data).join(', ');
+    if (!mimeType) {
+      return null;
     }
-    return widget;
+    let output = this.rendermime.createRenderer(mimeType);
+    let isolated = OutputArea.isIsolated(mimeType, model.metadata);
+    if (isolated === true) {
+      output = new Private.IsolatedRenderer(output);
+    }
+    Private.currentPreferredMimetype.set(output, mimeType);
+    output.renderModel(model).catch(error => {
+      // Manually append error message to output
+      const pre = document.createElement('pre');
+      pre.textContent = `Javascript Error: ${error.message}`;
+      output.node.appendChild(pre);
+
+      // Remove mime-type-specific CSS classes
+      output.node.className = 'p-Widget jp-RenderedText';
+      output.node.setAttribute(
+        'data-mime-type',
+        'application/vnd.jupyter.stderr'
+      );
+    });
+    return output;
   }
 
   /**
@@ -468,7 +476,10 @@ export class OutputArea extends Widget {
     // is overridden from 'execute_reply' to 'display_data' in order to
     // render output.
     let model = this.model;
-    let content = msg.content as KernelMessage.IExecuteOkReply;
+    let content = msg.content;
+    if (content.status !== 'ok') {
+      return;
+    }
     let payload = content && content.payload;
     if (!payload || !payload.length) {
       return;
@@ -487,7 +498,7 @@ export class OutputArea extends Widget {
   };
 
   private _minHeightTimeout: number = null;
-  private _future: Kernel.IFuture<
+  private _future: Kernel.IShellFuture<
     KernelMessage.IExecuteRequestMsg,
     KernelMessage.IExecuteReplyMsg
   > | null = null;
@@ -500,7 +511,7 @@ export class SimplifiedOutputArea extends OutputArea {
    */
   protected onInputRequest(
     msg: KernelMessage.IInputRequestMsg,
-    future: Kernel.IFuture
+    future: Kernel.IShellFuture
   ): void {
     return;
   }
@@ -508,9 +519,11 @@ export class SimplifiedOutputArea extends OutputArea {
   /**
    * Create an output item without a prompt, just the output widgets
    */
-  protected createOutputItem(model: IOutputModel): Widget {
+  protected createOutputItem(model: IOutputModel): Widget | null {
     let output = this.createRenderedMimetype(model);
-    output.addClass(OUTPUT_AREA_OUTPUT_CLASS);
+    if (output) {
+      output.addClass(OUTPUT_AREA_OUTPUT_CLASS);
+    }
     return output;
   }
 }
@@ -557,7 +570,7 @@ export namespace OutputArea {
     ) {
       stopOnError = false;
     }
-    let content: KernelMessage.IExecuteRequest = {
+    let content: KernelMessage.IExecuteRequestMsg['content'] = {
       code,
       stop_on_error: stopOnError
     };
@@ -568,6 +581,20 @@ export namespace OutputArea {
     let future = session.kernel.requestExecute(content, false, metadata);
     output.future = future;
     return future.done;
+  }
+
+  export function isIsolated(
+    mimeType: string,
+    metadata: ReadonlyJSONObject
+  ): boolean {
+    let mimeMd = metadata[mimeType] as ReadonlyJSONObject | undefined;
+    // mime-specific higher priority
+    if (mimeMd && mimeMd['isolated'] !== undefined) {
+      return !!mimeMd['isolated'];
+    } else {
+      // fallback on global
+      return !!metadata['isolated'];
+    }
   }
 
   /**
@@ -712,6 +739,7 @@ export class Stdin extends Widget implements IStdin {
       if ((event as KeyboardEvent).keyCode === 13) {
         // Enter
         this._future.sendInputReply({
+          status: 'ok',
           value: input.value
         });
         if (input.type === 'password') {
@@ -746,7 +774,7 @@ export class Stdin extends Widget implements IStdin {
     this._input.removeEventListener('keydown', this);
   }
 
-  private _future: Kernel.IFuture = null;
+  private _future: Kernel.IShellFuture = null;
   private _input: HTMLInputElement = null;
   private _value: string;
   private _promise = new PromiseDelegate<void>();
@@ -770,7 +798,7 @@ export namespace Stdin {
     /**
      * The kernel future associated with the request.
      */
-    future: Kernel.IFuture;
+    future: Kernel.IShellFuture;
   }
 }
 
@@ -865,4 +893,12 @@ namespace Private {
 
     private _wrapped: IRenderMime.IRenderer;
   }
+
+  export const currentPreferredMimetype = new AttachedProperty<
+    IRenderMime.IRenderer,
+    string
+  >({
+    name: 'preferredMimetype',
+    create: owner => ''
+  });
 }

@@ -10,8 +10,6 @@ import { PromiseDelegate } from '@phosphor/coreutils';
 // Stub for window MathJax.
 declare var MathJax: any;
 
-import '../style/index.css';
-
 /**
  * The MathJax Typesetter.
  */
@@ -58,9 +56,7 @@ export class MathJaxTypesetter implements IRenderMime.ILatexTypesetter {
     let head = document.getElementsByTagName('head')[0];
     let script = document.createElement('script');
     script.type = 'text/javascript';
-    script.src = `${this._url}?config=${
-      this._config
-    }&amp;delayStartupUntil=configured`;
+    script.src = `${this._url}?config=${this._config}&amp;delayStartupUntil=configured`;
     script.charset = 'utf-8';
     head.appendChild(script);
     script.addEventListener('load', () => {

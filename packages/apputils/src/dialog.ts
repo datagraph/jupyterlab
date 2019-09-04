@@ -11,11 +11,11 @@ import { PanelLayout, Panel, Widget } from '@phosphor/widgets';
 
 import * as React from 'react';
 
-import { InstanceTracker } from './instancetracker';
+import { Styling } from './styling';
 
 import { ReactWidget } from './vdom';
 
-import { Styling } from './styling';
+import { WidgetTracker } from './widgettracker';
 
 /**
  * Create and show a dialog.
@@ -43,18 +43,36 @@ export function showErrorMessage(
   title: string,
   error: any,
   buttons: ReadonlyArray<Dialog.IButton> = [
-    Dialog.okButton({ label: 'DISMISS' })
+    Dialog.okButton({ label: 'Dismiss' })
   ]
 ): Promise<void> {
   console.warn('Showing error:', error);
 
-  return showDialog({
-    title: title,
-    body: error.message || title,
-    buttons: buttons
-  }).then(() => {
-    /* no-op */
-  });
+  // Cache promises to prevent multiple copies of identical dialogs showing
+  // to the user.
+  let body = typeof error === 'string' ? error : error.message;
+  let key = title + '----' + body;
+  let promise = Private.errorMessagePromiseCache.get(key);
+  if (promise) {
+    return promise;
+  } else {
+    let dialogPromise = showDialog({
+      title: title,
+      body: body,
+      buttons: buttons
+    }).then(
+      () => {
+        Private.errorMessagePromiseCache.delete(key);
+      },
+      error => {
+        // TODO: Use .finally() above when supported
+        Private.errorMessagePromiseCache.delete(key);
+        throw error;
+      }
+    );
+    Private.errorMessagePromiseCache.set(key, dialogPromise);
+    return dialogPromise;
+  }
 }
 
 /**
@@ -360,11 +378,6 @@ export namespace Dialog {
   export type Header = React.ReactElement<any> | string;
 
   /**
-   * A simple type for prompt widget
-   */
-  type PromptValue = string | number | boolean;
-
-  /**
    * A widget used as a dialog body.
    */
   export interface IBodyWidget<T = string> extends Widget {
@@ -443,7 +456,7 @@ export namespace Dialog {
     host: HTMLElement;
 
     /**
-     * The to buttons to display. Defaults to cancel and accept buttons.
+     * The buttons to display. Defaults to cancel and accept buttons.
      */
     buttons: ReadonlyArray<IButton>;
 
@@ -527,7 +540,7 @@ export namespace Dialog {
    */
   export function createButton(value: Partial<IButton>): Readonly<IButton> {
     value.accept = value.accept !== false;
-    let defaultLabel = value.accept ? 'OK' : 'CANCEL';
+    let defaultLabel = value.accept ? 'OK' : 'Cancel';
     return {
       label: value.label || defaultLabel,
       iconClass: value.iconClass || '',
@@ -568,24 +581,6 @@ export namespace Dialog {
   }
 
   /**
-   * Simple dialog to prompt for a value
-   * @param prompt Text to show on the prompt
-   * @param defaultValue Initial value
-   * @returns a Promise which will resolve with the value entered by user.
-   */
-  export function prompt<T extends PromptValue>(
-    prompt: string,
-    defaultValue: PromptValue
-  ): Promise<Dialog.IResult<T>> {
-    return showDialog({
-      title: prompt,
-      body: new PromptWidget<T>(defaultValue as T),
-      buttons: [Dialog.cancelButton(), Dialog.okButton()],
-      focusNodeSelector: 'input'
-    });
-  }
-
-  /**
    * Disposes all dialog instances.
    *
    * #### Notes
@@ -596,56 +591,6 @@ export namespace Dialog {
     tracker.forEach(dialog => {
       dialog.dispose();
     });
-  }
-
-  /**
-   * Create and show a prompt dialog
-   */
-  class PromptWidget<T extends PromptValue> extends Widget {
-    constructor(value: T) {
-      let body = document.createElement('div');
-      let input = document.createElement('input');
-      if (typeof value === 'string') {
-        input.type = 'text';
-        if (value) {
-          input.value = value;
-        }
-      }
-      if (typeof value === 'number') {
-        input.type = 'number';
-        if (value) {
-          input.value = value.toFixed(2);
-        }
-      }
-      if (typeof value === 'boolean') {
-        input.type = 'checkbox';
-        input.checked = value;
-      }
-      body.appendChild(input);
-      super({ node: body });
-    }
-
-    /**
-     * Get the input text node.
-     */
-    get inputNode(): HTMLInputElement {
-      return this.node.getElementsByTagName('input')[0] as HTMLInputElement;
-    }
-
-    /**
-     * Get the value of the widget.
-     */
-    getValue(): T {
-      if (this.inputNode.type === 'number') {
-        // In this branch T extends number.
-        return parseFloat(this.inputNode.value) as T;
-      }
-      if (this.inputNode.type === 'checkbox') {
-        // In this branch T extends boolean.
-        return this.inputNode.checked as T;
-      }
-      return this.inputNode.value as T;
-    }
   }
 
   /**
@@ -809,9 +754,9 @@ export namespace Dialog {
   export const defaultRenderer = new Renderer();
 
   /**
-   * The dialog instance tracker.
+   * The dialog widget tracker.
    */
-  export const tracker = new InstanceTracker<Dialog<any>>({
+  export const tracker = new WidgetTracker<Dialog<any>>({
     namespace: '@jupyterlab/apputils:Dialog'
   });
 }
@@ -824,6 +769,8 @@ namespace Private {
    * The queue for launching dialogs.
    */
   export let launchQueue: Promise<Dialog.IResult<any>>[] = [];
+
+  export let errorMessagePromiseCache: Map<string, Promise<void>> = new Map();
 
   /**
    * Handle the input options for a dialog.

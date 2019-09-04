@@ -41,7 +41,7 @@ export abstract class JupyterFrontEnd<
     super(options);
 
     // The default restored promise if one does not exist in the options.
-    const restored = new Promise(resolve => {
+    const restored = new Promise<void>(resolve => {
       requestAnimationFrame(() => {
         resolve();
       });
@@ -266,12 +266,16 @@ export namespace JupyterFrontEnd {
     readonly urls: {
       readonly base: string;
       readonly notFound?: string;
-      readonly page: string;
-      readonly public: string;
+      readonly app: string;
+      readonly static: string;
       readonly settings: string;
       readonly themes: string;
       readonly tree: string;
       readonly workspaces: string;
+      readonly hubPrefix?: string;
+      readonly hubHost?: string;
+      readonly hubUser?: string;
+      readonly hubServerName?: string;
     };
 
     /**

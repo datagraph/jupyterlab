@@ -123,6 +123,19 @@ export class FileBrowser extends Widget {
   }
 
   /**
+   * Select an item by name.
+   *
+   * @param name - The name of the item to select.
+   */
+  async selectItemByName(name: string) {
+    await this._listing.selectItemByName(name);
+  }
+
+  clearSelectedItems() {
+    this._listing.clearSelectedItems();
+  }
+
+  /**
    * Rename the first currently selected item.
    *
    * @returns A promise that resolves with the new name of the item.
@@ -245,24 +258,31 @@ export class FileBrowser extends Widget {
    */
   private _onConnectionFailure(sender: FileBrowserModel, args: Error): void {
     if (
-      !this._showingError &&
       args instanceof ServerConnection.ResponseError &&
       args.response.status === 404
     ) {
       const title = 'Directory not found';
       args.message = `Directory not found: "${this.model.path}"`;
-      this._showingError = true;
-      void showErrorMessage(title, args).then(() => {
-        this._showingError = false;
-      });
+      void showErrorMessage(title, args);
     }
+  }
+
+  /**
+   * Whether to show active file in file browser
+   */
+  get navigateToCurrentDirectory(): boolean {
+    return this._navigateToCurrentDirectory;
+  }
+
+  set navigateToCurrentDirectory(value: boolean) {
+    this._navigateToCurrentDirectory = value;
   }
 
   private _crumbs: BreadCrumbs;
   private _listing: DirListing;
   private _manager: IDocumentManager;
-  private _showingError = false;
   private _directoryPending: boolean;
+  private _navigateToCurrentDirectory: boolean;
 }
 
 /**

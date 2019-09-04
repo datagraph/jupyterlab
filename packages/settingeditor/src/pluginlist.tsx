@@ -5,6 +5,12 @@
 
 import { ISettingRegistry } from '@jupyterlab/coreutils';
 
+import {
+  combineClasses,
+  DefaultIconReact,
+  defaultIconRegistry
+} from '@jupyterlab/ui-components';
+
 import { Message } from '@phosphor/messaging';
 
 import { ISignal, Signal } from '@phosphor/signaling';
@@ -42,21 +48,6 @@ export class PluginList extends Widget {
    */
   get changed(): ISignal<this, void> {
     return this._changed;
-  }
-
-  /**
-   * The editor type currently selected.
-   */
-  get editor(): 'raw' | 'table' {
-    return this._editor;
-  }
-  set editor(editor: 'raw' | 'table') {
-    if (this._editor === editor) {
-      return;
-    }
-
-    this._editor = editor;
-    this.update();
   }
 
   /**
@@ -120,10 +111,9 @@ export class PluginList extends Widget {
    */
   protected onUpdateRequest(msg: Message): void {
     const { node, registry } = this;
-    const type = this._editor;
     const selection = this._selection;
 
-    Private.populateList(registry, type, selection, node);
+    Private.populateList(registry, selection, node);
     node.querySelector('ul').scrollTop = this._scrollTop;
   }
 
@@ -139,15 +129,6 @@ export class PluginList extends Widget {
     let id = target.getAttribute('data-id');
 
     if (id === this._selection) {
-      return;
-    }
-
-    const editor = target.getAttribute('data-editor');
-
-    if (editor) {
-      this._editor = editor as 'raw' | 'table';
-      this._changed.emit(undefined);
-      this.update();
       return;
     }
 
@@ -176,7 +157,6 @@ export class PluginList extends Widget {
 
   private _changed = new Signal<this, void>(this);
   private _confirm: () => Promise<void>;
-  private _editor: 'raw' | 'table' = 'raw';
   private _scrollTop = 0;
   private _selection = '';
 }
@@ -264,7 +244,6 @@ namespace Private {
    */
   export function populateList(
     registry: ISettingRegistry,
-    type: 'raw' | 'table',
     selection: string,
     node: HTMLElement
   ): void {
@@ -280,7 +259,11 @@ namespace Private {
       const { id, schema, version } = plugin;
       const itemTitle = `${schema.description}\n${id}\n${version}`;
       const image = getHint(ICON_CLASS_KEY, registry, plugin);
-      const iconClass = `jp-PluginList-icon${image ? ' ' + image : ''}`;
+      const iconClass = combineClasses(
+        image,
+        'jp-PluginList-icon',
+        'jp-MaterialIcon'
+      );
       const iconTitle = getHint(ICON_LABEL_KEY, registry, plugin);
 
       return (
@@ -290,27 +273,24 @@ namespace Private {
           key={id}
           title={itemTitle}
         >
-          <span className={iconClass} title={iconTitle} />
+          {defaultIconRegistry.contains(image) ? (
+            <DefaultIconReact
+              name={image}
+              title={iconTitle}
+              className={''}
+              tag={'span'}
+              kind={'settingsEditor'}
+            />
+          ) : (
+            <span className={iconClass} title={iconTitle} />
+          )}
           <span>{schema.title || id}</span>
         </li>
       );
     });
 
     ReactDOM.unmountComponentAtNode(node);
-    ReactDOM.render(
-      <React.Fragment>
-        <div className="jp-PluginList-switcher">
-          <button data-editor="raw" disabled={type === 'raw'}>
-            Raw View
-          </button>
-          <button data-editor="table" disabled={type === 'table'}>
-            Table View
-          </button>
-        </div>
-        <ul>{items}</ul>
-      </React.Fragment>,
-      node
-    );
+    ReactDOM.render(<ul>{items}</ul>, node);
   }
 
   /**

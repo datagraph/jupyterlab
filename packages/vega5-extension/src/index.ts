@@ -11,8 +11,6 @@ import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 
 import * as VegaModuleType from 'vega-embed';
 
-import '../style/index.css';
-
 /**
  * The CSS class to add to the Vega and Vega-Lite widget.
  */
@@ -78,8 +76,6 @@ export class RenderedVega extends Widget implements IRenderMime.IRenderer {
 
     const vega =
       Private.vega != null ? Private.vega : await Private.ensureVega();
-    const path = await this._resolver.resolveUrl('');
-    const baseURL = await this._resolver.getDownloadUrl(path);
 
     const el = document.createElement('div');
 
@@ -87,15 +83,29 @@ export class RenderedVega extends Widget implements IRenderMime.IRenderer {
     this.node.textContent = '';
     this.node.appendChild(el);
 
+    if (this._result) {
+      this._result.view.finalize();
+    }
+
+    const loader = vega.vega.loader({
+      http: { credentials: 'same-origin' }
+    });
+    const sanitize = async (uri: string, options: any) => {
+      // Use the resolver for any URIs it wants to handle
+      const resolver = this._resolver;
+      if (resolver.isLocal(uri)) {
+        const absPath = await resolver.resolveUrl(uri);
+        uri = await resolver.getDownloadUrl(absPath);
+      }
+      return loader.sanitize(uri, options);
+    };
+
     this._result = await vega.default(el, spec, {
       actions: true,
       defaultStyle: true,
       ...embedOptions,
       mode,
-      loader: {
-        baseURL,
-        http: { credentials: 'same-origin' }
-      }
+      loader: { ...loader, sanitize }
     });
 
     if (model.data['image/png']) {
@@ -132,17 +142,17 @@ export const rendererFactory: IRenderMime.IRendererFactory = {
 const extension: IRenderMime.IExtension = {
   id: '@jupyterlab/vega5-extension:factory',
   rendererFactory,
-  rank: 50,
+  rank: 57,
   dataType: 'json',
   documentWidgetFactoryOptions: [
     {
-      name: 'Vega',
+      name: 'Vega5',
       primaryFileType: 'vega5',
       fileTypes: ['vega5', 'json'],
       defaultFor: ['vega5']
     },
     {
-      name: 'Vega-Lite',
+      name: 'Vega-Lite3',
       primaryFileType: 'vega-lite3',
       fileTypes: ['vega-lite3', 'json'],
       defaultFor: ['vega-lite3']
@@ -188,7 +198,7 @@ namespace Private {
       return vegaReady;
     }
 
-    vegaReady = import('vega-embed');
+    vegaReady = import('./built-vega-embed') as any;
 
     return vegaReady;
   }

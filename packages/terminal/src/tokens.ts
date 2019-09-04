@@ -5,7 +5,7 @@ import { Widget } from '@phosphor/widgets';
 
 import { Token } from '@phosphor/coreutils';
 
-import { IInstanceTracker, MainAreaWidget } from '@jupyterlab/apputils';
+import { IWidgetTracker, MainAreaWidget } from '@jupyterlab/apputils';
 
 import { TerminalSession } from '@jupyterlab/services';
 
@@ -13,7 +13,7 @@ import { TerminalSession } from '@jupyterlab/services';
  * A class that tracks editor widgets.
  */
 export interface ITerminalTracker
-  extends IInstanceTracker<MainAreaWidget<ITerminal.ITerminal>> {}
+  extends IWidgetTracker<MainAreaWidget<ITerminal.ITerminal>> {}
 
 /* tslint:disable */
 /**
@@ -97,8 +97,6 @@ export namespace ITerminal {
 
     /**
      * Whether to enable screen reader support.
-     *
-     * Set to false if you run into performance problems from DOM overhead
      */
     screenReaderMode: boolean;
 
@@ -122,7 +120,7 @@ export namespace ITerminal {
     shutdownOnClose: false,
     cursorBlink: true,
     initialCommand: '',
-    screenReaderMode: true,
+    screenReaderMode: false, // False by default, can cause scrollbar mouse interaction issues.
     pasteWithCtrlV: true
   };
 
