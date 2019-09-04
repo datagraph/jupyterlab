@@ -78,7 +78,7 @@ function createApp(manager: ServiceManager.IManager): void {
 
   cmt2.createInstance();*/
 
-  let svm = new SVM('Regression');
+  let svm = new SVM('Regression', 'SVR');
   svm.createInstance();
 
   let xy = new XYSelector();
@@ -96,13 +96,13 @@ function createApp(manager: ServiceManager.IManager): void {
   let commands = new CommandRegistry();
   let useCapture = true;
 
-  let linechart = new LineChart();
+  let linechart = new LineChart('chart1');
   linechart.createInstance();
 
-  let linechart2 = new LineChart();
+  let linechart2 = new LineChart('chart2');
   linechart2.createInstance();
 
-  let linearregresion = new LinearRegression();
+  let linearregresion = new LinearRegression('lr');
   linearregresion.createInstance();
 
   // Setup the keydown listener for the document.

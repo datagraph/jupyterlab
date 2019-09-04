@@ -1,4 +1,7 @@
+var chart1_set = false;
+var chart2_set = false;
 function create_line_chart(canvas_id, http_endpoint, interval) {
+  interval = 5 * 1000;
   // For demo stick to same config
   gradientChartOptionsConfigurationWithTooltipBlue = {
     maintainAspectRatio: false,
@@ -27,8 +30,8 @@ function create_line_chart(canvas_id, http_endpoint, interval) {
             zeroLineColor: 'transparent'
           },
           ticks: {
-            suggestedMin: -2.0,
-            suggestedMax: 2.0,
+            suggestedMin: -1.0,
+            suggestedMax: 1.0,
             padding: 20,
             fontColor: '#2380f7'
           }
@@ -51,6 +54,7 @@ function create_line_chart(canvas_id, http_endpoint, interval) {
       ]
     }
   };
+
   var chart_labels = ['t-5', 't-4', 't-3', 't-2', 't-1', 't'];
   var chart_data = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0];
 
@@ -97,13 +101,14 @@ function create_line_chart(canvas_id, http_endpoint, interval) {
 
     var xhr = new XMLHttpRequest();
     xhr.withCredentials = true;
-
+    http_endpoint = '/proxy/hit/api';
     xhr.addEventListener('readystatechange', function() {
       if (this.readyState === 4) {
         var resp = JSON.parse(this.responseText);
-        myChartData.data.datasets[0].data.shift();
-        myChartData.data.datasets[0].data.push(resp.point);
-        myChartData.update();
+        var x = JSON.parse(resp);
+        widget_chart.data.datasets[0].data.shift();
+        widget_chart.data.datasets[0].data.push(x.diff_lr);
+        widget_chart.update();
       }
     });
 
@@ -115,7 +120,7 @@ function create_line_chart(canvas_id, http_endpoint, interval) {
       'Postman-Token',
       'd4d78eb9-4bd1-4f9e-91a6-7994b7735a0b,f2743424-12b7-4a0a-a570-02c36fb08fe2'
     );
-    xhr.setRequestHeader('Host', 'localhost:5000');
+    xhr.setRequestHeader('Host', 'de8.dydra.com:5002');
     xhr.setRequestHeader('accept-encoding', 'gzip, deflate');
     xhr.setRequestHeader('Connection', 'keep-alive');
     xhr.setRequestHeader('cache-control', 'no-cache');

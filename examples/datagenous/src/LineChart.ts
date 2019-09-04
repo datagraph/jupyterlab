@@ -18,8 +18,11 @@ export class LineChart extends Widget {
   // what parameters should be passed for Hyperparameter space
   hyperparameter_json: string;
 
-  constructor() {
-    super({ node: LineChart.createNode(uuid()) });
+  constructor(widget_id: string) {
+    // For ivans demo
+
+    //super({ node: LineChart.createNode(uuid()) });
+    super({ node: LineChart.createNode(widget_id) });
   }
 
   static createNode(widget_id: string): HTMLElement {
@@ -34,7 +37,7 @@ export class LineChart extends Widget {
       '<div class="right">' +
       '<a role="button" id="play-button" onclick="create_line_chart(\'canvas_' +
       widget_id +
-      '\');"  >' +
+      "', '-', 5);\"  >" +
       '<i class="icon-play"></i></a>' +
       '<a href="#" class="close"><i class="icon-exit"></i></a>' +
       '</div>' +

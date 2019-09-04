@@ -19,8 +19,9 @@ export class SVM extends Widget {
   // what parameters should be passed for Hyperparameter space
   hyperparameter_json: string;
 
-  constructor(svm_type: string) {
-    super({ node: SVM.createNode(uuid(), svm_type) });
+  constructor(svm_type: string, widget_id: string) {
+    super({ node: SVM.createNode(widget_id, svm_type) });
+    //super({ node: SVM.createNode(uuid(), svm_type) });
     //this.children_types[0] = "tabular-data-source-xy";
     if (svm_type == 'Classifier') this.widget_type = 'sklearn-svm-classifier';
     else if (svm_type == 'Regressor')

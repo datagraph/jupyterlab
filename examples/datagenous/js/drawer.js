@@ -1,4 +1,4 @@
-var windows = Array();
+var widget_windows = Array();
 
 // Mxgraph main variables
 var graph;
@@ -10,6 +10,9 @@ var vertex_height = 8;
 
 var vertex_set = new Set();
 var edge_set = new Set();
+
+var lr_chart = None;
+var svr_chart = None;
 
 // If UI updates are due to syncing with peers, do not publish them back
 var sync_lock = false;
@@ -59,6 +62,38 @@ function prepare_mxgraph() {
   graph.getModel().addListener(mxEvent.CHANGE, function(sender, evt) {
     console.log('Graph changed');
     var changes = evt.properties.changes;
+    if (changes.length == 3) {
+      child = changes[0].child;
+
+      source_vertex = child.source.id;
+      target_vertex = child.target.id;
+      if (source_vertex == 'lr_right') {
+        if (target_vertex == 'chart1_left') {
+          lr_chart = 'chart1';
+          console.log('LR connected successfully');
+        } else if (target_vertex == 'chart2_left') {
+          lr_chart = 'chart2';
+          console.log('LR connected successfully');
+        } else {
+          console.log('ML models can be only input to charts');
+        }
+      }
+      if (source_vertex == 'SVR_right') {
+        if (target_vertex == 'chart1_left') {
+          svr_chart = 'chart1';
+          console.log('SVR connected successfully');
+        } else if (target_vertex == 'chart2_left') {
+          svr_chart = 'chart2';
+          console.log('SVR connected successfully');
+        } else {
+          console.log('ML models can be only input to charts');
+        }
+      }
+
+      console.log('From :' + source_vertex);
+      console.log('To :' + target_vertex);
+    }
+
     if (changes.length == 1) {
       console.log('Potentially a delete edge or add vertex change');
       if (changes[0].child != null)

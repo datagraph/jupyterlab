@@ -32,6 +32,15 @@ ML_SERVER_PATH="http://localhost:5000"
 
 # DELETE ME!!, one user, one demo case XY - selection
 xy_selection = ""
+model_svm_set = False
+model_lr_set = False
+model_svm_chart = None
+model_lr_chart = None
+data_1_svm_connected = False
+data_2_svm_connected = False
+data_1_lr_connected = False
+data_2_lr_connected = False
+
 
 app = Flask(__name__, static_url_path='/static')
 app.config['DEBUG'] = True
@@ -138,9 +147,35 @@ def train_svm():
 def add_proxy_http_api(widget_id):
     pass
 
-@app.route('/proxy/hit/api/<string:widget_id>')
-def hit_proxy_http_api(widget_id):
-    pass
+@app.route('/proxy/hit/api/')
+def hit_proxy_http_api():
+    url = "http://de8.dydra.com:5003/api/demo/zinc"
+
+    headers = {
+    'User-Agent': "PostmanRuntime/7.15.2",
+    'Accept': "*/*",
+    'Cache-Control': "no-cache",
+    'Postman-Token': "3724cdc8-321a-47b1-ba9c-699869b60ce7,40b0d01e-394b-40f2-bb37-ad94a444c5cf",
+    'Host': "de8.dydra.com:5003",
+    'Accept-Encoding': "gzip, deflate",
+    'Connection': "keep-alive",
+    'cache-control': "no-cache"
+    }
+
+    response = requests.request("GET", url, headers=headers)
+
+    return json.dumps(response.text)
+
+
+@app.route('/set/svm', methods=["GET", "POST"])
+def set_svm():
+    model_svm_set = True
+
+@app.route('/set/lr', methods=["GET", "POST"])
+def set_lr():
+    model_lr_set = True
+
+
 
 
 if __name__ == '__main__':

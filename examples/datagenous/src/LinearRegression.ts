@@ -18,8 +18,9 @@ export class LinearRegression extends Widget {
   // what parameters should be passed for Hyperparameter space
   hyperparameter_json: string;
 
-  constructor() {
-    super({ node: LinearRegression.createNode(uuid()) });
+  constructor(widget_id: string) {
+    super({ node: LinearRegression.createNode(widget_id) });
+    //super({ node: LinearRegression.createNode(uuid()) });
     //this.children_types[0] = "tabular-data-source-xy";
   }
 
