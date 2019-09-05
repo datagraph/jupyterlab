@@ -27,16 +27,17 @@
 
 
   </head>
-  <body class="jui"  onchange="visualize();">
+  <body class="jui"  >
 
   <script type="text/javascript">
     /* UI */
   var widgets;
   $( document ).ready(function() {
     prepare_mxgraph();
+    visualize();
   });
 
-  $('body').change(visualize);
+  // $('body').change(visualize);
 
   function visualize()
   {
