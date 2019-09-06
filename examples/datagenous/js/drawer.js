@@ -11,8 +11,8 @@ var vertex_height = 8;
 var vertex_set = new Set();
 var edge_set = new Set();
 
-var lr_chart = None;
-var svr_chart = None;
+var lr_chart = null;
+var svr_chart = null;
 
 // If UI updates are due to syncing with peers, do not publish them back
 var sync_lock = false;

@@ -101,6 +101,12 @@ def canvas():
     LOGGER.info("Starting test canvas - IP:" +  get_request_ip())
     return app.send_static_file('index.html')
 
+@app.route('/canvas/demo/csv', methods=['GET'])
+def canvas_demo():
+    """ Demo canvas  """
+    LOGGER.info("Starting test canvas - IP:" +  get_request_ip())
+    return app.send_static_file('demo-csv.html')
+
 
 @app.route('/canvas/<string:canvas_id>', methods=['GET'])
 def canvas_id(canvas_id):

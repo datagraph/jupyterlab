@@ -1,4 +1,6 @@
-// Testing purposes only
+// temporary variable to hold state of the canvas windows
+
+// Listener for window position changes
 function get_window_position_state(window_id) {
   var window_left_pos = $('#' + window_id)[0].style.left;
   var window_top_pos = $('#' + window_id)[0].style.top;

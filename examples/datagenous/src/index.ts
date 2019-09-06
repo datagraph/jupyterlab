@@ -65,19 +65,22 @@ function main(): void {
     createApp(manager);
   });
 }
-
+export function whatsYourName(name: string) {
+  console.log(name);
+}
 function createApp(manager: ServiceManager.IManager): void {
   // Initialize the command registry with the bindings.
 
   let c = new Canvas();
   c.createInstance();
+  /*
   let cmt = new Comment('test');
   cmt.createInstance();
-
+  */
   /*let cmt2 = new Comment('test1');
 
   cmt2.createInstance();*/
-
+  /*
   let svm = new SVM('Regression', 'SVR');
   svm.createInstance();
 
@@ -92,10 +95,10 @@ function createApp(manager: ServiceManager.IManager): void {
 
   let http2 = new HTTPEndpoint();
   http2.createInstance();
-
+   */
   let commands = new CommandRegistry();
   let useCapture = true;
-
+  /*
   let linechart = new LineChart('chart1');
   linechart.createInstance();
 
@@ -104,7 +107,7 @@ function createApp(manager: ServiceManager.IManager): void {
 
   let linearregresion = new LinearRegression('lr');
   linearregresion.createInstance();
-
+   */
   // Setup the keydown listener for the document.
   document.addEventListener(
     'keydown',
@@ -129,4 +132,14 @@ function createApp(manager: ServiceManager.IManager): void {
   };
 }
 
+function create_widget(id: string, widget_type: string) {
+  if (widget_type == 'input/csv') {
+    let csv = new CSVReader(id);
+    csv.createInstance();
+  } else if (widget_type == 'linechart') {
+    let linechart = new LineChart('chart1');
+    linechart.createInstance();
+  }
+}
+(window as any).create_widget = create_widget;
 window.addEventListener('load', main);
