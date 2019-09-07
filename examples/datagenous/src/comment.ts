@@ -7,8 +7,11 @@ import { v4 as uuid } from 'uuid';
 export class Comment extends Widget {
   id: string;
   constructor(widget_id: string) {
-    super({ node: Comment.createNode(widget_id) });
-    //this.id = uuid();
+    if (widget_id) {
+      super({ node: Comment.createNode(widget_id) });
+    } else {
+      super({ node: Comment.createNode(widget_id) });
+    }
   }
 
   static createNode(widget_id: string): HTMLElement {

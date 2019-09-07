@@ -103,9 +103,23 @@ def canvas():
 
 @app.route('/canvas/demo/csv', methods=['GET'])
 def canvas_demo():
-    """ Demo canvas  """
+    """ Demo canvas  CSV widget only"""
     LOGGER.info("Starting test canvas - IP:" +  get_request_ip())
     return app.send_static_file('demo-csv.html')
+
+@app.route('/canvas/demo/csv-linear', methods=['GET'])
+def canvas_demo_2():
+    """ Demo canvas a linear regression from CSV file  """
+    LOGGER.info("Starting test canvas - IP:" +  get_request_ip())
+    return app.send_static_file('demo-csv-regression.html')
+
+@app.route('/canvas/demo/csv-svm', methods=['GET'])
+def canvas_demo_3():
+    """ Demo canvas a linear regression from CSV file  """
+    LOGGER.info("Starting test canvas - IP:" +  get_request_ip())
+    return app.send_static_file('demo-csv-regression.html')
+
+
 
 
 @app.route('/canvas/<string:canvas_id>', methods=['GET'])

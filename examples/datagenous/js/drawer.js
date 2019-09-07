@@ -101,14 +101,17 @@ function prepare_mxgraph() {
           if (changes[0].constructor.name == 'mxGeometryChange') {
             console.log('Geometry change only');
           } else {
-            console.log('Deleting an edge');
-            child = changes[0].child;
+            if (changes[0].child) {
+              console.log('A programatic change perhaps');
+            } else {
+              child = changes[0].child;
 
-            source_vertex = child.source.id;
-            target_vertex = child.target.id;
+              source_vertex = child.source.id;
+              target_vertex = child.target.id;
 
-            console.log('From :' + source_vertex);
-            console.log('To :' + target_vertex);
+              console.log('From :' + source_vertex);
+              console.log('To :' + target_vertex);
+            }
           }
         }
     } else if (changes.length == 5) {
@@ -352,7 +355,6 @@ function drawline(window_1, window_2) {
     var e1 = graph.insertEdge(parent, edge_id, '', v1, v2);
   } finally {
     // Updates the display
-    graph.getModel().endUpdate();
   }
 }
 // Every relatable element will have its vertexes
@@ -364,6 +366,5 @@ function set_window_vertex() {
     var e1 = graph.insertEdge(parent, null, '', v1, v2);
   } finally {
     // Updates the display
-    graph.getModel().endUpdate();
   }
 }

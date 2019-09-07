@@ -45,7 +45,7 @@ export class CSVReader extends Widget {
   public createInstance(): void {
     let body = document.body;
 
-    window.console.log(' Creating a comment');
+    window.console.log(' Creating a CSV reader ');
     // Get canvas
     let canvas = document.getElementById('graphContainer');
 

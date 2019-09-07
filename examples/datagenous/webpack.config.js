@@ -1,6 +1,7 @@
 module.exports = {
   entry: ['whatwg-fetch', './build/index.js'],
   output: {
+    library: 'widgets_lib',
     path: __dirname + '/build',
     filename: 'bundle.js',
     publicPath: './example/'

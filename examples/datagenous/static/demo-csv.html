@@ -4,6 +4,7 @@
     <title>Datagenous Canvas</title>
 
     <script src="/canvas/build/bundle.js"></script>
+    <script src="/canvas/build/index.js"></script>
         <base href="/">
  <!--<script type="module" src="build/replication/rdf-client.js"></script>-->
 
@@ -40,16 +41,9 @@
 
       //prepare_mxgraph();
       visualize();
-      initialize_canvas();
+
   });
-// To deal with jquery is not being attached
-function wait_jquery_and_init() {
-      if (window.jQuery) {
-          initialize_canvas();
-      } else {
-          setTimeout(function() { wait_jquery_and_init() }, 50);
-      }
-  }
+
 function initialize_canvas()
 {
  // Calls phosphor widgets first using json

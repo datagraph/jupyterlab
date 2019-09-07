@@ -19,20 +19,20 @@ export class SVM extends Widget {
   // what parameters should be passed for Hyperparameter space
   hyperparameter_json: string;
 
-  constructor(svm_type: string, widget_id: string) {
-    super({ node: SVM.createNode(widget_id, svm_type) });
-    //super({ node: SVM.createNode(uuid(), svm_type) });
+  constructor(widget_id: string) {
+    if (widget_id) {
+      super({ node: SVM.createNode(widget_id) });
+    } else {
+      super({ node: SVM.createNode(widget_id) });
+    }
+    //super({ node: LinearRegression.createNode(uuid()) });
     //this.children_types[0] = "tabular-data-source-xy";
-    if (svm_type == 'Classifier') this.widget_type = 'sklearn-svm-classifier';
-    else if (svm_type == 'Regressor')
-      this.widget_type = 'sklearn-svm-regressor';
   }
 
-  static createNode(widget_id: string, svm_type: string): HTMLElement {
-    // Create two widgets, delete me and make me dynamic later
+  static createNode(widget_id: string): HTMLElement {
     let node = document.createElement('div');
     node.id = widget_id;
-
+    let svm_type = 'Regressor';
     node.innerHTML =
       '<div class="head">' +
       '<div class="left">Model/SVM/' +

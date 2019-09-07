@@ -60,6 +60,8 @@ function createCanvasMenu(): MenuBar {
 }
 
 function main(): void {
+  (window as any).create_widget = create_widget;
+
   let manager = new ServiceManager();
   manager.ready.then(() => {
     createApp(manager);
@@ -132,14 +134,20 @@ function createApp(manager: ServiceManager.IManager): void {
   };
 }
 
-function create_widget(id: string, widget_type: string) {
+export function create_widget(id: string, widget_type: string) {
   if (widget_type == 'input/csv') {
     let csv = new CSVReader(id);
     csv.createInstance();
   } else if (widget_type == 'linechart') {
-    let linechart = new LineChart('chart1');
+    let linechart = new LineChart(id);
     linechart.createInstance();
+  } else if (widget_type == 'filter/xy') {
+    let xyselector = new XYSelector(id);
+    xyselector.createInstance();
+  } else if (widget_type == 'model/regression/linear') {
+    let linearregresion = new LinearRegression(id);
+    linearregresion.createInstance();
   }
 }
-(window as any).create_widget = create_widget;
+//(window as any).create_widget = create_widget;
 window.addEventListener('load', main);

@@ -19,9 +19,13 @@ export class XYSelector extends Widget {
   // what parameters should be passed for Hyperparameter space
   hyperparameter_json: string;
 
-  constructor() {
-    super({ node: XYSelector.createNode(uuid()) });
-    //this.children_types[0] = "tabular-data-source";
+  constructor(widget_id: string) {
+    if (widget_id) {
+      super({ node: XYSelector.createNode(widget_id) });
+    } else {
+      super({ node: XYSelector.createNode(uuid()) });
+    }
+
     this.widget_type = 'tabular-data-source-xy';
   }
 

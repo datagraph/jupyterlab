@@ -72,7 +72,7 @@ export class Canvas extends Widget {
     window.console.log(' Creating a new canvas ');
     // First Menu
     Widget.attach(menubar, body);
-    Widget.attach(this_canvas, body);
+    //Widget.attach(this_canvas, body);
 
     (window as any).eval('prepare_mxgraph();');
   }

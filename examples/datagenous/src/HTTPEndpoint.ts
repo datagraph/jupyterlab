@@ -14,8 +14,14 @@ export class HTTPEndpoint extends Widget {
   //
   widget_type: string;
 
-  constructor() {
-    super({ node: HTTPEndpoint.createNode(uuid()) });
+  constructor(widget_id: string) {
+    if (widget_id) {
+      super({ node: HTTPEndpoint.createNode(widget_id) });
+    } else {
+      super({ node: HTTPEndpoint.createNode(widget_id) });
+    }
+    //super({ node: LinearRegression.createNode(uuid()) });
+    //this.children_types[0] = "tabular-data-source-xy";
   }
 
   static createNode(widget_id: string): HTMLElement {
