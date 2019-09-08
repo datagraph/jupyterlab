@@ -27,12 +27,15 @@ export class Comment extends Widget {
       '</div>' +
       '</div>' +
       '<div class="body">' +
-      '<textarea rows=8 placeholder= "Your comment here.."> </textarea>' +
+      '<textarea id="comment" rows=8 placeholder= "Your comment here.."> </textarea>' +
       '</div>';
 
     node_comment.setAttribute('class', 'window');
-    node_comment.setAttribute('onMouseUp', "get_window_position_state('test')");
 
+    node_comment.setAttribute(
+      'onMouseUp',
+      "get_window_position_state('" + widget_id + "')"
+    );
     return node_comment;
   }
 

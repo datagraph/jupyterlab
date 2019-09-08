@@ -73,8 +73,8 @@ export function whatsYourName(name: string) {
 function createApp(manager: ServiceManager.IManager): void {
   // Initialize the command registry with the bindings.
 
-  let c = new Canvas();
-  c.createInstance();
+  //let c = new Canvas();
+  //c.createInstance();
   /*
   let cmt = new Comment('test');
   cmt.createInstance();
@@ -147,6 +147,12 @@ export function create_widget(id: string, widget_type: string) {
   } else if (widget_type == 'model/regression/linear') {
     let linearregresion = new LinearRegression(id);
     linearregresion.createInstance();
+  } else if (widget_type == 'model/regression/svr') {
+    let svm = new SVM(id);
+    svm.createInstance();
+  } else if (widget_type == 'comment') {
+    let comment = new Comment(id);
+    comment.createInstance();
   }
 }
 //(window as any).create_widget = create_widget;

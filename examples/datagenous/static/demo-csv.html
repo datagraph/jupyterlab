@@ -29,6 +29,7 @@
 
   </head>
   <body class="jui">
+    <div id="graphContainer" style="position:relative;overflow:hidden;width:4000px;height:5000px;"> </div>
 
    <script type="text/javascript">
 
@@ -70,7 +71,7 @@ function initialize_canvas()
   var widgets = windows.widgets;
   for (w in widgets)
   {
-    this.window.create_widget(widgets[w].id, widgets[w].type);
+    widgets_lib.create_widget(widgets[w].id, widgets[w].type);
   }
 }
   // $('body').change(visualize);

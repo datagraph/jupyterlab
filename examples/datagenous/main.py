@@ -117,7 +117,7 @@ def canvas_demo_2():
 def canvas_demo_3():
     """ Demo canvas a linear regression from CSV file  """
     LOGGER.info("Starting test canvas - IP:" +  get_request_ip())
-    return app.send_static_file('demo-csv-regression.html')
+    return app.send_static_file('demo-csv-svm.html')
 
 
 
