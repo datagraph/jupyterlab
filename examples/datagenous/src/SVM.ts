@@ -44,7 +44,7 @@ export class SVM extends Widget {
       '</div>' +
       '</div>' +
       '<div class="body">' +
-      '<textarea rows=8 placeholder= "Your parameters here.."> </textarea>' +
+      '<textarea id="svm_options" rows=8 placeholder= "Your parameters here.."> </textarea>' +
       '</div>';
 
     node.setAttribute('class', 'window');

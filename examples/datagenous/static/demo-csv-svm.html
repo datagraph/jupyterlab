@@ -48,7 +48,14 @@
             "top": 250,
             "width" : 250,
             "height":250,
-            "elements": []
+            "elements": [
+              {
+                "id":"filename",
+                "value": "hdgy",
+                "section":"body",
+                "type": "input"
+              }
+            ]
           },
           {
             "id": "XY",
@@ -57,7 +64,14 @@
             "top": 250,
             "width" : 250,
             "height":150,
-            "elements": []
+            "elements": [
+              {
+                "id":"xy_input",
+                "value": "[1:8,25:26]",
+                "section":"body",
+                "type": "input"
+              }
+            ]
           },
           {
             "id": "lr",
@@ -75,8 +89,15 @@
             "left": 850,
             "top": 600,
             "width" : 250,
-            "height":150,
-            "elements": []
+            "height":200,
+            "elements": [
+              {
+                "id":"svm_options",
+                "value": "C:1.0 ",
+                "section":"body",
+                "type": "textarea"
+              }
+            ]
           },
           {
             "id": "comment",
@@ -123,7 +144,6 @@ function initialize_canvas_windows()
   {
     widgets_lib.create_widget(widgets[w].id, widgets[w].type);
   }
-  // Second edges
 
 
 }
@@ -139,6 +159,21 @@ function initialize_edges()
                      graph.getModel().cells[edges[e].target])
   }
   graph.getModel().endUpdate();
+}
+
+// Separate before setup is made for juizer
+function initialize_elements()
+{
+  // First windows
+  var widgets = windows.widgets;
+  for (w in widgets)
+  {
+    for (e in widgets[w].elements)
+    {
+        $("#" + widgets[w].elements[e].id).val(widgets[w].elements[e].value);
+
+    }
+  }
 }
   // $('body').change(visualize);
 
@@ -170,6 +205,7 @@ function initialize_edges()
       }).show();
       draw_vertexes(widget_id);
       initialize_edges();
+      initialize_elements();
       });
 
     }

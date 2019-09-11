@@ -45,7 +45,7 @@ export class XYSelector extends Widget {
       '</div>' +
       '</div>' +
       '<div class="body">' +
-      '<input  placeholder= "Enter indexes for X and Y" /> ' +
+      '<input id="xy_input" placeholder= "Enter indexes for X and Y" /> ' +
       '</div>';
 
     node.setAttribute('class', 'window');
