@@ -38,7 +38,7 @@ export class LinearRegression extends Widget {
       '<div class="left">Model/LinearRegression/' +
       '</div>' +
       '<div class="right">' +
-      '<a id="play-button" onclick="train_linear_regression();" href="" ><i class="icon-play"></i></a>' +
+      '<a role="button" id="play-button" onclick="train_linear_regression();" href="" ><i class="icon-play"></i></a>' +
       '<a href="#" class="close"><i class="icon-exit"></i></a>' +
       '</div>' +
       '</div>' +
