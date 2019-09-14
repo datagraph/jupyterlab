@@ -42,10 +42,10 @@ export class HTTPEndpoint extends Widget {
       '</div>' +
       '</div>' +
       '<div class="body">' +
-      '<input id = "httpendpoint" type="text" name="httpendpoint" placeholder="HTTP API endpoint">' +
+      '<input id = "httpendpoint1input" type="text" name="httpendpoint" placeholder="HTTP API endpoint">' +
       '<br/>' +
       '<br/>' +
-      '<input id = "httpendpointinterval" type="text" name="httpendpointinterval" placeholder="Interval in seconds">' +
+      '<input id = "httpendpoint1interval" type="text" name="httpendpointinterval" placeholder="Interval in seconds">' +
       '</div>';
 
     node.setAttribute('class', 'window');

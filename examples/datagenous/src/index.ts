@@ -153,6 +153,9 @@ export function create_widget(id: string, widget_type: string) {
   } else if (widget_type == 'comment') {
     let comment = new Comment(id);
     comment.createInstance();
+  } else if (widget_type == 'input/HTTPEndpoint') {
+    let http = new HTTPEndpoint(id);
+    http.createInstance();
   }
 }
 //(window as any).create_widget = create_widget;
