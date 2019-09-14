@@ -58,3 +58,4 @@ junit.xml
 
 # ms IDE stuff
 .vscode
+examples/datagenous/DatagenousRouter.log
