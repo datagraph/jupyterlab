@@ -62,10 +62,10 @@ function createCanvasMenu(): MenuBar {
 function main(): void {
   (window as any).create_widget = create_widget;
 
-  let manager = new ServiceManager();
+  /*let manager = new ServiceManager();
   manager.ready.then(() => {
     createApp(manager);
-  });
+  });*/
 }
 export function whatsYourName(name: string) {
   console.log(name);

@@ -32,7 +32,18 @@
     <div id="graphContainer" style=" overflow-x: auto; overflow-y: scroll; width:4000px;" </div>
    <script type="text/javascript">
 
-
+    /*
+    * ML execution flow
+    */
+    var execution_interpretation = [];
+    var execution_widgets = [];
+    class TreeNode {
+       constructor(value, parent) {
+          this.value = value;
+          this.descendents = [];
+          this.parent = parent;
+      }
+    }
      /* UI */
      // Calls phosphor widgets first using json
      // Then edges and nodes
@@ -212,6 +223,65 @@ function initialize_canvas_windows()
 
 }
 
+// Create execution graph for widget
+
+function execute_widget(id, widget_type)
+{
+  if (widget_type == 'input/csv') {
+    file_read_request(id, 'csv')
+  } else if (widget_type == 'linechart') {
+    let linechart = new LineChart(id);
+    linechart.createInstance();
+  } else if (widget_type == 'filter/xy') {
+     setXY(id);
+  } else if (widget_type == 'model/regression/linear') {
+    train_model(id, widget_type)
+  } else if (widget_type == 'model/regression/svr') {
+    train_model(id, widget_type)
+  } else if (widget_type == 'comment') {
+
+  } else if (widget_type == 'input/HTTPEndpoint') {
+
+  }
+
+}
+
+function get_list_of_widgets_connected(id)
+{
+  var edges = windows.edges;
+  var widget_id = null;
+  for (e in edges)
+  {
+    if (edges[e].target == (id + "_left") )
+    {
+       widget_id = edges[e].source.substring(0, edges[e].source.indexOf('_'));
+       execution_widgets.push(widget_id);
+       execution_interpretation.push(new TreeNode(widget_id, id))
+       get_list_of_widgets_connected(widget_id)
+    }
+  }
+
+}
+function train_model(id, widget_type)
+{
+  var widgets = windows.widgets;
+  var edges = windows.edges;
+  var model_widget = null;
+  var widget_chain_id = [];
+  for (w in widgets)
+  {
+    if (widgets[w].id == id)
+    {
+      model_widget = widgets[w];
+      execution_interpretation.push(new TreeNode(id, null));
+      execution_widgets.push(id);
+      get_list_of_widgets_connected(id);
+      break;
+    }
+
+  }
+ //get_list_of_widgets_connected(id, widget_chain_id)
+}
 function initialize_edges()
 {
   var edges = windows.edges;

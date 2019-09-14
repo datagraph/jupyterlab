@@ -39,7 +39,9 @@ export class SVM extends Widget {
       svm_type +
       '</div>' +
       '<div class="right">' +
-      '<a role="button" id="play-button" onclick="train_svm();"  ><i class="icon-play"></i></a>' +
+      '<a role="button" id="play-button" onclick="execute_widget(\'' +
+      widget_id +
+      '\',\'model/regression/svr\')"><i class="icon-play"></i></a>' +
       '<a href="#" class="close"><i class="icon-exit"></i></a>' +
       '</div>' +
       '</div>' +
