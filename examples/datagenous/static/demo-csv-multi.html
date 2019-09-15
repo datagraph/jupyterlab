@@ -276,6 +276,33 @@ function get_list_of_widgets_connected(node)
   }
 
 }
+function train_svm()
+{
+ var data = null;
+
+var xhr = new XMLHttpRequest();
+xhr.withCredentials = true;
+
+xhr.addEventListener("readystatechange", function () {
+  if (this.readyState === 4) {
+    console.log(this.responseText);
+  }
+});
+
+xhr.open("GET", "http://de8.dydra.com:5002/demo/api/v1.0/train_svm");
+xhr.setRequestHeader("Content-Type", "application/json");
+xhr.setRequestHeader("User-Agent", "PostmanRuntime/7.16.3");
+xhr.setRequestHeader("Accept", "*/*");
+xhr.setRequestHeader("Cache-Control", "no-cache");
+xhr.setRequestHeader("Postman-Token", "1a7b17c4-fee0-451f-8de2-3fea12323827,0e3e048d-2329-4175-b47f-9ca5abec2803");
+xhr.setRequestHeader("Host", "localhost:5000");
+xhr.setRequestHeader("Accept-Encoding", "gzip, deflate");
+xhr.setRequestHeader("Content-Length", "1296");
+xhr.setRequestHeader("Connection", "keep-alive");
+xhr.setRequestHeader("cache-control", "no-cache");
+
+xhr.send(data);
+}
 function train_model(id, widget_type)
 {
   if(widget_type == 'model/regression/svr' )
@@ -299,6 +326,7 @@ function train_model(id, widget_type)
     }
 
   }
+  
  //get_list_of_widgets_connected(id, widget_chain_id)
 }
 function initialize_edges()
