@@ -38,10 +38,11 @@
     var execution_interpretation = [];
     var execution_widgets = [];
     class TreeNode {
-       constructor(value, parent) {
+       constructor(value, parent,widget_type) {
           this.value = value;
           this.descendents = [];
           this.parent = parent;
+          this.widget_type = widget_type;
       }
     }
      /* UI */
@@ -250,13 +251,23 @@ function get_list_of_widgets_connected(id)
 {
   var edges = windows.edges;
   var widget_id = null;
+  var widgets = windows.widgets;
   for (e in edges)
   {
     if (edges[e].target == (id + "_left") )
     {
        widget_id = edges[e].source.substring(0, edges[e].source.indexOf('_'));
+       var widget_type = null;
        execution_widgets.push(widget_id);
-       execution_interpretation.push(new TreeNode(widget_id, id))
+       for (w in widgets)
+       {
+         if(widgets[w].id == widget_id)
+         {
+           widget_type = widgets[w].type
+         }
+
+       }
+       execution_interpretation.push(new TreeNode(widget_id, id, widget_type))
        get_list_of_widgets_connected(widget_id)
     }
   }
@@ -273,7 +284,7 @@ function train_model(id, widget_type)
     if (widgets[w].id == id)
     {
       model_widget = widgets[w];
-      execution_interpretation.push(new TreeNode(id, null));
+      execution_interpretation.push(new TreeNode(id, null, widget_type));
       execution_widgets.push(id);
       get_list_of_widgets_connected(id);
       break;
