@@ -234,7 +234,7 @@ function execute_widget(id, widget_type)
     let linechart = new LineChart(id);
     linechart.createInstance();
   } else if (widget_type == 'filter/xy') {
-     setXY(id);
+     setXY(id, widget_type);
   } else if (widget_type == 'model/regression/linear') {
     train_model(id, widget_type)
   } else if (widget_type == 'model/regression/svr') {
@@ -278,6 +278,10 @@ function get_list_of_widgets_connected(node)
 }
 function train_model(id, widget_type)
 {
+  if(widget_type == 'model/regression/svr' )
+  {
+      train_svm(id, widget_type)
+  }
   var widgets = windows.widgets;
   var edges = windows.edges;
   var model_widget = null;

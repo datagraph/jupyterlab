@@ -40,17 +40,20 @@ function file_read_request(widget_id, widget_type) {
   xhr.send(data);
 }
 
-function setXY(widget_id) {
+function setXY(widget_id, widget_type) {
   console.log('Received XYset request from widget:' + widget_id);
   var x = $('#' + widget_id);
   // CSV readers have input as first field, continiuning with assumptions
   var input_field = x
     .children('.body')
-    .children('#filename')
+    .children('#xy_input')
     .val();
 
-  var data = null;
-
+  var data = JSON.stringify({
+    filter: input_field,
+    widget_id: widget_id,
+    widget_type: widget_type
+  });
   var xhr = new XMLHttpRequest();
   xhr.withCredentials = true;
 
@@ -60,10 +63,88 @@ function setXY(widget_id) {
     }
   });
 
-  xhr.open(
-    'GET',
-    'http://de8.dydra.com:5002/canvas/api/xy_selection/' + input_field
+  xhr.open('POST', 'http://localhost:5002/api/v1.0/widget/');
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.setRequestHeader('User-Agent', 'PostmanRuntime/7.15.2');
+  xhr.setRequestHeader('Accept', '*/*');
+  xhr.setRequestHeader('Cache-Control', 'no-cache');
+  xhr.setRequestHeader(
+    'Postman-Token',
+    'edd60906-7bf1-496c-9831-f9e08508600b,c5a98ca1-ae9f-47ff-a257-8515d75491ba'
   );
+  xhr.setRequestHeader('Host', 'de8.dydra.com:5002');
+  xhr.setRequestHeader('Accept-Encoding', 'gzip, deflate');
+  xhr.setRequestHeader('Connection', 'keep-alive');
+  xhr.setRequestHeader('cache-control', 'no-cache');
+
+  xhr.send(data);
+}
+
+function train_svm(widget_id, widget_type) {
+  console.log('Train svm request from widget:' + widget_id);
+  var x = $('#' + widget_id);
+  // CSV readers have input as first field, continiuning with assumptions
+  var input_field = x
+    .children('.body')
+    .children('#svm_options')
+    .val();
+
+  var data = JSON.stringify({
+    options: input_field,
+    widget_id: widget_id,
+    widget_type: widget_type
+  });
+  var xhr = new XMLHttpRequest();
+  xhr.withCredentials = true;
+
+  xhr.addEventListener('readystatechange', function() {
+    if (this.readyState === 4) {
+      console.log(this.responseText);
+    }
+  });
+
+  xhr.open('POST', 'http://localhost:5002/api/v1.0/widget/');
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.setRequestHeader('User-Agent', 'PostmanRuntime/7.15.2');
+  xhr.setRequestHeader('Accept', '*/*');
+  xhr.setRequestHeader('Cache-Control', 'no-cache');
+  xhr.setRequestHeader(
+    'Postman-Token',
+    'edd60906-7bf1-496c-9831-f9e08508600b,c5a98ca1-ae9f-47ff-a257-8515d75491ba'
+  );
+  xhr.setRequestHeader('Host', 'de8.dydra.com:5002');
+  xhr.setRequestHeader('Accept-Encoding', 'gzip, deflate');
+  xhr.setRequestHeader('Connection', 'keep-alive');
+  xhr.setRequestHeader('cache-control', 'no-cache');
+
+  xhr.send(data);
+}
+
+function http_input(widget_id, widget_type) {
+  console.log('Train svm request from widget:' + widget_id);
+  var x = $('#' + widget_id);
+  // CSV readers have input as first field, continiuning with assumptions
+  var input_field = x
+    .children('.body')
+    .children('#svm_options')
+    .val();
+
+  var data = JSON.stringify({
+    options: input_field,
+    widget_id: widget_id,
+    widget_type: widget_type
+  });
+  var xhr = new XMLHttpRequest();
+  xhr.withCredentials = true;
+
+  xhr.addEventListener('readystatechange', function() {
+    if (this.readyState === 4) {
+      console.log(this.responseText);
+    }
+  });
+
+  xhr.open('POST', 'http://localhost:5002/api/v1.0/widget/');
+  xhr.setRequestHeader('Content-Type', 'application/json');
   xhr.setRequestHeader('User-Agent', 'PostmanRuntime/7.15.2');
   xhr.setRequestHeader('Accept', '*/*');
   xhr.setRequestHeader('Cache-Control', 'no-cache');
