@@ -1,4 +1,4 @@
-function file_read_request(widget_id, filetype) {
+function file_read_request(widget_id, widget_type) {
   console.log('Received file read request from widget:' + widget_id);
   var x = $('#' + widget_id);
   // CSV readers have input as first field, continiuning with assumptions
@@ -7,8 +7,11 @@ function file_read_request(widget_id, filetype) {
     .children('#filename')
     .val();
 
-  var data = null;
-
+  var data = JSON.stringify({
+    filename: input_field,
+    widget_id: widget_id,
+    widget_type: widget_type
+  });
   var xhr = new XMLHttpRequest();
   xhr.withCredentials = true;
 
@@ -20,10 +23,8 @@ function file_read_request(widget_id, filetype) {
     }
   });
 
-  xhr.open(
-    'GET',
-    'http://de8.dydra.com:5002/canvas/api/read_csv/' + input_field
-  );
+  xhr.open('POST', 'http://localhost:5002/api/v1.0/widget/');
+  xhr.setRequestHeader('Content-Type', 'application/json');
   xhr.setRequestHeader('User-Agent', 'PostmanRuntime/7.13.0');
   xhr.setRequestHeader('Accept', '*/*');
   xhr.setRequestHeader('Cache-Control', 'no-cache');
@@ -31,7 +32,7 @@ function file_read_request(widget_id, filetype) {
     'Postman-Token',
     'e44130ab-361e-4251-af3a-222542a3948a,fc1ae3ce-99de-46cc-aef5-26900045bd98'
   );
-  xhr.setRequestHeader('Host', 'localhost:5000');
+  xhr.setRequestHeader('Host', 'localhost:5002');
   xhr.setRequestHeader('accept-encoding', 'gzip, deflate');
   xhr.setRequestHeader('Connection', 'keep-alive');
   xhr.setRequestHeader('cache-control', 'no-cache');

@@ -146,6 +146,30 @@ def set_xy(selection):
     return selection
 
 
+
+@app.route('/api/v1.0/widget/', methods=['POST'])
+def set_widget_state_api():
+
+    payload =request.get_json()
+
+    url = "http://localhost:5000/api/v1.0/widget"
+    print(payload)
+    headers = {
+    'Content-Type': "application/json",
+    'User-Agent': "PostmanRuntime/7.16.3",
+    'Accept': "*/*",
+    'Cache-Control': "no-cache",
+    'Postman-Token': "dc54fafb-ed2a-44e7-8dd1-122101e9f02c,354c3224-205e-4daa-be1c-8d4687f6bffe",
+    'Host': "localhost:5000",
+    'Accept-Encoding': "gzip, deflate",
+    'Content-Length': "28",
+    'Connection': "keep-alive",
+    'cache-control': "no-cache"
+    }
+    print(json.dumps(payload))
+    response = requests.request("POST", url, data=json.dumps(payload), headers=headers)
+    return json.dumps(response.text)
+
 # Analytics API callers over HTTP
 @app.route('/canvas/api/read_csv/<string:filename>', methods=["GET"])
 def get_csv(filename):
