@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Datagenous Canvas</title>
+
+    <script src="/canvas/build/bundle.js"></script>
+        <base href="/">
+ <!--<script type="module" src="build/replication/rdf-client.js"></script>-->
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mxgraph@3.9.12/javascript/dist/build.min.js"></script>
+<script type="text/javascript" src="/canvas/js/jui-core.js"></script>
+<script type="text/javascript" src="/canvas/js/jui-ui.js"></script>
+	<!-- Loads and initializes the library -->
+	 <script type="text/javascript" src="/canvas/js/mxClient.js"></script>
+   <script type="text/javascript" src="/canvas/js/client.js"></script>
+   <script type="text/javascript" src="/canvas/js/charter.js"></script>
+
+  <script type="text/javascript" src="/canvas/js/drawer.js"></script>
+  <script type="text/javascript" src="/canvas/js/window-manager.js"></script>
+  <script type="text/javascript" src="/canvas/js/chartjs.min.js"></script>
+
+
+<!-- Basic style components -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jui@2.0.3/dist/ui.min.css" >
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jui@2.0.3/dist/ui-jennifer.min.css" >
+
+
+  </head>
+  <body class="jui" style=" overflow-x: auto; overflow-y: auto; width:4000px;">
+
+    <div id="graphContainer" style=" overflow-x: auto; overflow-y: scroll; width:4000px;" </div>
+   <script type="text/javascript">
+
+    /*
+    * ML execution flow
+    */
+    var execution_interpretation = [];
+    var execution_widgets = [];
+    class TreeNode {
+       constructor(value, parent,widget_type) {
+          this.value = value;
+          this.descendents = [];
+          this.parent = parent;
+          this.widget_type = widget_type;
+      }
+    }
+     /* UI */
+     // Calls phosphor widgets first using json
+     // Then edges and nodes
+     // windows variable manages the serialization of UX elements
+     var windows =
+      {
+
+        "widgets": [
+          {
+            "id": "stop",
+            "type": "input/csv",
+            "left": 250,
+            "top": 250,
+            "width" : 250,
+            "height":250,
+            "elements": [
+              {
+                "id":"filename",
+                "value": "hdgy",
+                "section":"body",
+                "type": "input"
+              }
+            ]
+          },
+          {
+            "id": "XY",
+            "type": "filter/xy",
+            "left": 550,
+            "top": 250,
+            "width" : 250,
+            "height":150,
+            "elements": [
+              {
+                "id":"xy_input",
+                "value": "1:8,25:26",
+                "section":"body",
+                "type": "input"
+              }
+            ]
+          },
+
+          {
+            "id": "svm",
+            "type": "model/regression/svr",
+            "left": 850,
+            "top": 600,
+            "width" : 250,
+            "height":200,
+            "elements": [
+              {
+                "id":"svm_options",
+                "value": "C:1.0 ",
+                "section":"body",
+                "type": "textarea"
+              }
+            ]
+          },
+
+          {
+            "id": "linechart1",
+            "type": "linechart",
+            "left": 1250,
+            "top": 250,
+            "width" : 250,
+            "height":250,
+            "elements": []
+          },
+          {
+            "id": "http1",
+            "type": "input/HTTPEndpoint",
+            "left": 150,
+            "top": 850,
+            "width" : 250,
+            "height":250,
+
+            "elements": [
+              {
+                "id":"httpendpoint1input",
+                "value": "http://de8.dydra.com:5002/proxy/hit/api ",
+                "section":"body",
+                "type": "input"
+              },
+              {
+                "id":"httpendpoint1interval",
+                "value": "5 ",
+                "section":"body",
+                "type": "input"
+              }
+            ]
+          }
+        ],
+        "edges":[
+          {
+            "id": "edge_1",
+            "source": "stop_right",
+            "target": "XY_left"
+          },
+          {
+            "id": "edge_2",
+            "source": "XY_right",
+            "target": "lr_left"
+          },
+          {
+            "id": "edge_3",
+            "source": "XY_right",
+            "target": "svm_left"
+          },
+          {
+            "id": "edge_4",
+            "source": "svm_right",
+            "target": "linechart1_left"
+          },
+          {
+            "id": "edge_7",
+            "source": "http1_right",
+            "target": "svm_left"
+          }
+
+        ],
+        "nodes":[]
+      }
+  $( document ).ready(function() {
+      initialize_canvas_windows();
+      visualize();
+      prepare_mxgraph();
+      //initialize_edges();
+
+  });
+
+function initialize_canvas_windows()
+{
+  // First windows
+  var widgets = windows.widgets;
+  for (w in widgets)
+  {
+    widgets_lib.create_widget(widgets[w].id, widgets[w].type);
+  }
+
+
+}
+
+// Create execution graph for widget
+
+function execute_widget(id, widget_type)
+{
+  if (widget_type == 'input/csv') {
+    file_read_request(id, widget_type)
+  } else if (widget_type == 'linechart') {
+    let linechart = new LineChart(id);
+    linechart.createInstance();
+  } else if (widget_type == 'filter/xy') {
+     setXY(id, widget_type);
+  } else if (widget_type == 'model/regression/linear') {
+    train_model(id, widget_type)
+  } else if (widget_type == 'model/regression/svr') {
+    train_model(id, widget_type)
+  } else if (widget_type == 'comment') {
+
+  } else if (widget_type == 'input/HTTPEndpoint') {
+
+  }
+
+}
+
+function get_list_of_widgets_connected(node)
+{
+  var edges = windows.edges;
+  var widget_id = null;
+  var widgets = windows.widgets;
+  console.log(node.value)
+  for (e in edges)
+  {
+    if (edges[e].target == (node.value + "_left") )
+    {
+       widget_id = edges[e].source.substring(0, edges[e].source.indexOf('_'));
+       var widget_type = null;
+       execution_widgets.push(widget_id);
+       for (w in widgets)
+       {
+         if(widgets[w].id == widget_id)
+         {
+           widget_type = widgets[w].type
+         }
+
+       }
+       var new_node = new TreeNode(widget_id, node.value, widget_type)
+       node.descendents.push(new_node)
+       execution_interpretation.push(new_node)
+       get_list_of_widgets_connected(new_node)
+    }
+  }
+
+}
+function train_svm()
+{
+ var data = null;
+
+var xhr = new XMLHttpRequest();
+xhr.withCredentials = true;
+
+xhr.addEventListener("readystatechange", function () {
+  if (this.readyState === 4) {
+    console.log(this.responseText);
+  }
+});
+
+xhr.open("GET", "http://de8.dydra.com:5002/demo/api/v1.0/train_svm");
+xhr.setRequestHeader("Content-Type", "application/json");
+xhr.setRequestHeader("User-Agent", "PostmanRuntime/7.16.3");
+xhr.setRequestHeader("Accept", "*/*");
+xhr.setRequestHeader("Cache-Control", "no-cache");
+xhr.setRequestHeader("Postman-Token", "1a7b17c4-fee0-451f-8de2-3fea12323827,0e3e048d-2329-4175-b47f-9ca5abec2803");
+xhr.setRequestHeader("Host", "localhost:5000");
+xhr.setRequestHeader("Accept-Encoding", "gzip, deflate");
+xhr.setRequestHeader("Content-Length", "1296");
+xhr.setRequestHeader("Connection", "keep-alive");
+xhr.setRequestHeader("cache-control", "no-cache");
+
+xhr.send(data);
+}
+function train_model(id, widget_type)
+{
+  if(widget_type == 'model/regression/svr' )
+  {
+      train_svm(id, widget_type)
+  }
+  var widgets = windows.widgets;
+  var edges = windows.edges;
+  var model_widget = null;
+  var widget_chain_id = [];
+  for (w in widgets)
+  {
+    if (widgets[w].id == id)
+    {
+      model_widget = widgets[w];
+      var node = new TreeNode(id, null, widget_type)
+      execution_interpretation.push(node);
+      execution_widgets.push(node);
+      get_list_of_widgets_connected(node);
+      break;
+    }
+
+  }
+
+ //get_list_of_widgets_connected(id, widget_chain_id)
+}
+function initialize_edges()
+{
+  var edges = windows.edges;
+  graph.getModel().beginUpdate();
+  for (e in edges)
+  {
+    graph.insertEdge(graph.getDefaultParent(),graph.getModel().cells[edges[e].id],'',
+                     graph.getModel().cells[edges[e].source],
+                     graph.getModel().cells[edges[e].target])
+  }
+  graph.getModel().endUpdate();
+}
+
+// Separate before setup is made for juizer
+function initialize_elements()
+{
+  // First windows
+  var widgets = windows.widgets;
+  for (w in widgets)
+  {
+    for (e in widgets[w].elements)
+    {
+        $("#" + widgets[w].elements[e].id).val(widgets[w].elements[e].value);
+
+    }
+  }
+}
+  // $('body').change(visualize);
+
+  function visualize()
+  {
+
+    var widgets = windows.widgets;
+    for (w in widgets)
+    {
+      juizer(widgets[w].id,widgets[w].left,widgets[w].top,
+        widgets[w].width,widgets[w].height );
+    }
+    /*$('.window').each(function() {
+         juizer(this.id );
+      });*/
+  }
+  function juizer(widget_id, _left,_top, _width, _height)
+  {
+    jui.ready([ "ui.window" ], function(win) {
+
+    /* Data read */
+    win_0 = win(("#" + widget_id), {
+        width: _width,
+        height: _height,
+        left: _left,
+        top: _top,
+        resize: true,
+        move: true
+      }).show();
+      draw_vertexes(widget_id);
+      initialize_edges();
+      initialize_elements();
+      });
+
+    }
+
+    $(window).on('load', function() {
+    // your code here
+
+});
+
+
+
+  </script>
+
+
+  </body>
+</html>
