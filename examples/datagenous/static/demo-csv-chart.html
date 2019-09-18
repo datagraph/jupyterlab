@@ -203,7 +203,7 @@ function execute_widget(id, widget_type)
     file_read_request(id, widget_type);
     file_read_request_preview(id, widget_type);
   } else if (widget_type == 'linechart') {
-    http_input(id, widget_type);
+    predict_output_request(id, widget_type);
   } else if (widget_type == 'filter/xy') {
      setXY(id, widget_type);
   } else if (widget_type == 'model/regression/linear') {
@@ -213,7 +213,7 @@ function execute_widget(id, widget_type)
   } else if (widget_type == 'comment') {
 
   } else if (widget_type == 'input/HTTPEndpoint') {
-
+    http_input(widget_id, widget_type)
   }
 
 }
