@@ -161,16 +161,22 @@ function train_svm(widget_id, widget_type) {
 }
 
 function http_input(widget_id, widget_type) {
-  console.log('Train svm request from widget:' + widget_id);
+  console.log('Add HTTP request from widget:' + widget_id);
   var x = $('#' + widget_id);
   // CSV readers have input as first field, continiuning with assumptions
   var input_field = x
     .children('.body')
-    .children('#svm_options')
+    .children('#httpendpoint1input')
+    .val();
+
+  var interval_field = x
+    .children('.body')
+    .children('#httpendpoint1interval')
     .val();
 
   var data = JSON.stringify({
-    options: input_field,
+    http_endpoint: input_field,
+    interval: interval_field,
     widget_id: widget_id,
     widget_type: widget_type
   });

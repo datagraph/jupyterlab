@@ -203,8 +203,7 @@ function execute_widget(id, widget_type)
     file_read_request(id, widget_type);
     file_read_request_preview(id, widget_type);
   } else if (widget_type == 'linechart') {
-    let linechart = new LineChart(id);
-    linechart.createInstance();
+    http_input(id, widget_type);
   } else if (widget_type == 'filter/xy') {
      setXY(id, widget_type);
   } else if (widget_type == 'model/regression/linear') {
@@ -218,6 +217,8 @@ function execute_widget(id, widget_type)
   }
 
 }
+
+
 
 function get_list_of_widgets_connected(node)
 {
