@@ -23,7 +23,7 @@ function file_read_request(widget_id, widget_type) {
     }
   });
 
-  xhr.open('POST', 'http://localhost:5002/api/v1.0/widget/');
+  xhr.open('POST', 'http://de8.dydra.com:5002/api/v1.0/widget/');
   xhr.setRequestHeader('Content-Type', 'application/json');
   xhr.setRequestHeader('User-Agent', 'PostmanRuntime/7.13.0');
   xhr.setRequestHeader('Accept', '*/*');
@@ -103,7 +103,7 @@ function setXY(widget_id, widget_type) {
     }
   });
 
-  xhr.open('POST', 'http://localhost:5002/api/v1.0/widget/');
+  xhr.open('POST', 'http://de8.dydra.com:5002/api/v1.0/widget/');
   xhr.setRequestHeader('Content-Type', 'application/json');
   xhr.setRequestHeader('User-Agent', 'PostmanRuntime/7.15.2');
   xhr.setRequestHeader('Accept', '*/*');
@@ -143,7 +143,7 @@ function train_svm(widget_id, widget_type) {
     }
   });
 
-  xhr.open('POST', 'http://localhost:5002/api/v1.0/widget/');
+  xhr.open('POST', 'http://de8.dydra.com:5002/api/v1.0/widget/');
   xhr.setRequestHeader('Content-Type', 'application/json');
   xhr.setRequestHeader('User-Agent', 'PostmanRuntime/7.15.2');
   xhr.setRequestHeader('Accept', '*/*');
@@ -183,7 +183,7 @@ function http_input(widget_id, widget_type) {
     }
   });
 
-  xhr.open('POST', 'http://localhost:5002/api/v1.0/widget/');
+  xhr.open('POST', 'http://de8.dydra.com:5002/api/v1.0/widget/');
   xhr.setRequestHeader('Content-Type', 'application/json');
   xhr.setRequestHeader('User-Agent', 'PostmanRuntime/7.15.2');
   xhr.setRequestHeader('Accept', '*/*');
