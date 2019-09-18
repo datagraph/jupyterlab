@@ -34,7 +34,7 @@ export class HTTPEndpoint extends Widget {
       '<div class="left">Input/HTTP/' +
       '</div>' +
       '<div class="right">' +
-      '<a id="play-button" onclick="draw_line_chart(' +
+      '<a id="play-button" role="button" onclick="draw_line_chart(' +
       widget_id +
       ');" href="" >' +
       '<i class="icon-play"></i></a>' +
