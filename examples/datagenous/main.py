@@ -127,7 +127,7 @@ def canvas_demo_4():
 
 
 @app.route('/canvas/demo/csv-chart', methods=['GET'])
-def canvas_demo_4():
+def canvas_demo_5():
     """ Demo canvas a linear regression from CSV file  """
     LOGGER.info("Starting test canvas - IP:" +  get_request_ip())
     return app.send_static_file('demo-csv-chart.html')
