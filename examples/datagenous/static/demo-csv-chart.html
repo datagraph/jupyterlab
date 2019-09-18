@@ -200,7 +200,8 @@ function initialize_canvas_windows()
 function execute_widget(id, widget_type)
 {
   if (widget_type == 'input/csv') {
-    file_read_request(id, widget_type)
+    file_read_request(id, widget_type);
+    file_read_request_preview(id, widget_type);
   } else if (widget_type == 'linechart') {
     let linechart = new LineChart(id);
     linechart.createInstance();
