@@ -18,7 +18,7 @@ export class HTTPEndpoint extends Widget {
     if (widget_id) {
       super({ node: HTTPEndpoint.createNode(widget_id) });
     } else {
-      super({ node: HTTPEndpoint.createNode(widget_id) });
+      super({ node: LinearRegression.createNode(uuid()) });
     }
     //super({ node: LinearRegression.createNode(uuid()) });
     //this.children_types[0] = "tabular-data-source-xy";

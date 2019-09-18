@@ -67,9 +67,7 @@ function main(): void {
     createApp(manager);
   });*/
 }
-export function whatsYourName(name: string) {
-  console.log(name);
-}
+
 function createApp(manager: ServiceManager.IManager): void {
   // Initialize the command registry with the bindings.
 
