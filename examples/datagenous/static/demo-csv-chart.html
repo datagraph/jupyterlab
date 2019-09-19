@@ -217,7 +217,51 @@ function execute_widget(id, widget_type)
   }
 
 }
+function predict_output_request(id, widget_type)
+{
+  var widgets = windows.widgets;
+  var edges = windows.edges;
+  var model_widget = null;
+  var widget_chain_id = [];
+  execution_interpretation = [];
+  execution_widgets = [];
+  for (w in widgets)
+  {
+    if (widgets[w].id == id)
+    {
+      model_widget = widgets[w];
+      var node = new TreeNode(id, null, widget_type)
+      execution_interpretation.push(node);
+      execution_widgets.push(node);
+      for (e in edges)
+      {
+        if (edges[e].target == (node.value + "_left") )
+        {
+           widget_id = edges[e].source.substring(0, edges[e].source.indexOf('_'));
+           var widget_type = null;
+           execution_widgets.push(widget_id);
+           for (w in widgets)
+           {
+             if(widgets[w].id == widget_id)
+             {
+               widget_type = widgets[w].type
+               if  widget_type ==  'model/regression/linear'
+                   or widget_type ==  'model/regression/svr':
+                   break
+             }
 
+           }
+           var new_node = new TreeNode(widget_id, node.value, widget_type)
+           node.descendents.push(new_node)
+           execution_interpretation.push(new_node)
+        }
+      }
+      break;
+    }
+
+  }
+  set_prediction_chart(id, widget_type, model_id)
+}
 
 
 function get_list_of_widgets_connected(node)
@@ -279,6 +323,9 @@ xhr.send(data);
 }
 function train_model(id, widget_type)
 {
+  execution_widgets = [];
+  execution_interpretation = [];
+
   if(widget_type == 'model/regression/svr' )
   {
       train_svm(id, widget_type)
