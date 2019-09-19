@@ -326,11 +326,7 @@ function train_model(id, widget_type)
   execution_widgets = [];
   execution_interpretation = [];
 
-  if(widget_type == 'model/regression/svr' )
-  {
-      train_svm(id, widget_type);
-      train_svm_api(id, widget_type);
-  }
+
   var widgets = windows.widgets;
   var edges = windows.edges;
   var model_widget = null;
@@ -347,6 +343,11 @@ function train_model(id, widget_type)
       break;
     }
 
+  }
+  if(widget_type == 'model/regression/svr' )
+  {
+      train_svm(id, widget_type);
+      train_svm_api(id, widget_type);
   }
 
  //get_list_of_widgets_connected(id, widget_chain_id)
