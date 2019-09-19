@@ -193,24 +193,25 @@ def get_csv(filename):
     return json.dumps(response.text)
 
 
-@app.route('/demo/api/v1.0/train_svm', methods=["GET"])
+@app.route('/demo/api/v1.0/train_svm', methods=["POST"])
 def train_svm():
     url = "http://de8.dydra.com:5000/demo/api/v1.0/train_svm"
+    payload =request.get_json()
 
     headers = {
     'Content-Type': "application/json",
     'User-Agent': "PostmanRuntime/7.16.3",
     'Accept': "*/*",
     'Cache-Control': "no-cache",
-    'Postman-Token': "1a7b17c4-fee0-451f-8de2-3fea12323827,7127505f-8594-4993-aa4c-ab578e06cbf3",
-    'Host': "localhost:5000",
+    'Postman-Token': "b8854be7-bb0b-40a1-a75b-3a7a73a7c4d9,df3c6533-953f-4978-b580-0ff7ba555ca2",
+    'Host': "de8.dydra.com:5000",
     'Accept-Encoding': "gzip, deflate",
     'Content-Length': "1296",
     'Connection': "keep-alive",
     'cache-control': "no-cache"
     }
 
-    response = requests.request("GET", url, headers=headers)
+    response = requests.request("POST", url, data=json.dumps(payload), headers=headers)
 
     print(response.text)
     return response.text
