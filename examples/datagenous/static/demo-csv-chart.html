@@ -245,8 +245,8 @@ function predict_output_request(id, widget_type)
              if(widgets[w].id == widget_id)
              {
                widget_type = widgets[w].type
-               if  widget_type ==  'model/regression/linear'
-                   or widget_type ==  'model/regression/svr':
+               if (widget_type ==  'model/regression/linear' ||
+                   widget_type ==  'model/regression/svr')
                    break
              }
 
