@@ -240,17 +240,7 @@ function predict_output_request(id, widget_type)
            model_widget = edges[e].source.substring(0, edges[e].source.indexOf('_'));
            var widget_type = null;
            //xecution_widgets.push(widget_id);
-           for (w in widgets)
-           {
-             if(widgets[w].id == widget_id)
-             {
-               widget_type = widgets[w].type
-               if (widget_type ==  'model/regression/linear' ||
-                   widget_type ==  'model/regression/svr')
-                   break
-             }
-
-           }
+          
 
            /*var new_node = new TreeNode(widget_id, node.value, widget_type)
            node.descendents.push(new_node)
