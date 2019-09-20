@@ -240,6 +240,26 @@ def hit_proxy_http_api():
     return json.dumps(response.text)
 
 
+@app.route('/proxy/hit/api/<string:model_id>')
+def hit_proxy_http_api(model_id):
+    url = "http://de8.dydra.com:5000/ml/http_endpoint/" + model_id
+
+    headers = {
+    'User-Agent': "PostmanRuntime/7.15.2",
+    'Accept': "*/*",
+    'Cache-Control': "no-cache",
+    'Postman-Token': "3724cdc8-321a-47b1-ba9c-699869b60ce7,40b0d01e-394b-40f2-bb37-ad94a444c5cf",
+    'Host': "de8.dydra.com:5003",
+    'Accept-Encoding': "gzip, deflate",
+    'Connection': "keep-alive",
+    'cache-control': "no-cache"
+    }
+
+    response = requests.request("GET", url, headers=headers)
+
+    return json.dumps(response.text)
+
+
 @app.route('/set/svm', methods=["GET", "POST"])
 def set_svm():
     model_svm_set = True

@@ -2,7 +2,7 @@ var chart1_set = false;
 var chart2_set = false;
 function create_line_chart(id, widget_type, interval, model_id) {
   interval = interval * 1000;
-  http_endpoint = 'http://de8.dydra.com:5000/ml/http_endpoint/' + model_id;
+  http_endpoint = '/proxy/hit/api/' + model_id;
   // For demo stick to same config
   gradientChartOptionsConfigurationWithTooltipBlue = {
     maintainAspectRatio: false,
