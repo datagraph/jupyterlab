@@ -1,7 +1,8 @@
 var chart1_set = false;
 var chart2_set = false;
-function create_line_chart(canvas_id, http_endpoint, interval) {
-  interval = 5 * 1000;
+function create_line_chart(id, widget_type, interval, model_id) {
+  interval = interval * 1000;
+  http_endpoint = 'http://de8.dydra.com:5000/ml/http_endpoint/' + model_id;
   // For demo stick to same config
   gradientChartOptionsConfigurationWithTooltipBlue = {
     maintainAspectRatio: false,
@@ -58,7 +59,7 @@ function create_line_chart(canvas_id, http_endpoint, interval) {
   var chart_labels = ['t-5', 't-4', 't-3', 't-2', 't-1', 't'];
   var chart_data = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0];
 
-  var ctx = document.getElementById(canvas_id).getContext('2d');
+  var ctx = document.getElementById(id).getContext('2d');
 
   var gradientStroke = ctx.createLinearGradient(0, 230, 0, 50);
 
@@ -105,7 +106,7 @@ function create_line_chart(canvas_id, http_endpoint, interval) {
     xhr.addEventListener('readystatechange', function() {
       if (this.readyState === 4) {
         var resp = JSON.parse(this.responseText);
-        var x = JSON.parse(resp);
+        var x = JSON.parse(resp['prediction']);
         widget_chart.data.datasets[0].data.shift();
         widget_chart.data.datasets[0].data.push(x.diff_lr);
         widget_chart.update();
@@ -127,4 +128,9 @@ function create_line_chart(canvas_id, http_endpoint, interval) {
 
     xhr.send(data);
   }, interval);
+}
+
+function set_prediction_chart(id, widget_type, interval, model_id) {
+  // Get endpoint and interval
+  create_line_chart(id, widget_type, interval, model_id);
 }
