@@ -229,17 +229,17 @@ function predict_output_request(id, widget_type)
   {
     if (widgets[w].id == id)
     {
-      model_widget = widgets[w];
-      var node = new TreeNode(id, null, widget_type)
+      chart_widget = widgets[w];
+      /*var node = new TreeNode(id, null, widget_type)
       execution_interpretation.push(node);
-      execution_widgets.push(node);
+      execution_widgets.push(node);*/
       for (e in edges)
       {
-        if (edges[e].target == (node.value + "_left") )
+        if (edges[e].target == (chart_widget + "_left") )
         {
-           widget_id = edges[e].source.substring(0, edges[e].source.indexOf('_'));
+           model_widget = edges[e].source.substring(0, edges[e].source.indexOf('_'));
            var widget_type = null;
-           execution_widgets.push(widget_id);
+           //xecution_widgets.push(widget_id);
            for (w in widgets)
            {
              if(widgets[w].id == widget_id)
@@ -251,11 +251,14 @@ function predict_output_request(id, widget_type)
              }
 
            }
-           var new_node = new TreeNode(widget_id, node.value, widget_type)
+
+           /*var new_node = new TreeNode(widget_id, node.value, widget_type)
            node.descendents.push(new_node)
            execution_interpretation.push(new_node)
+           */
         }
       }
+      set_prediction_chart(chart_widget, widget_type, 5, model_widget)
       break;
     }
 
