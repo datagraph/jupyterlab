@@ -240,7 +240,7 @@ function predict_output_request(id, widget_type)
            model_widget = edges[e].source.substring(0, edges[e].source.indexOf('_'));
            var widget_type = null;
            //xecution_widgets.push(widget_id);
-          
+
 
            /*var new_node = new TreeNode(widget_id, node.value, widget_type)
            node.descendents.push(new_node)
@@ -248,7 +248,7 @@ function predict_output_request(id, widget_type)
            */
         }
       }
-      set_prediction_chart(chart_widget, widget_type, 5, model_widget)
+      set_prediction_chart(chart_widget.id, widget_type, 5, model_widget)
       break;
     }
 
