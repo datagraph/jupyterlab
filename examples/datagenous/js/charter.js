@@ -105,7 +105,7 @@ function create_line_chart(id, widget_type, interval, model_id) {
     xhr.addEventListener('readystatechange', function() {
       if (this.readyState === 4) {
         var resp = JSON.parse(this.responseText);
-        var x = JSON.parse(JSON.parse(x));
+        var x = JSON.parse(JSON.parse(resp));
         widget_chart.data.datasets[0].data.shift();
         widget_chart.data.datasets[0].data.push(x.prediction);
         widget_chart.update();
