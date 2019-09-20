@@ -241,7 +241,7 @@ def hit_proxy_http_api():
 
 
 @app.route('/proxy/hit/api/<string:model_id>')
-def hit_proxy_http_api(model_id):
+def hit_proxy_http_api_model(model_id):
     url = "http://de8.dydra.com:5000/ml/http_endpoint/" + model_id
 
     headers = {
