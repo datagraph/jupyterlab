@@ -132,5 +132,5 @@ function create_line_chart(id, widget_type, interval, model_id) {
 
 function set_prediction_chart(id, widget_type, interval, model_id) {
   // Get endpoint and interval
-  create_line_chart(id, widget_type, interval, model_id);
+  create_line_chart('canvas_' + id, widget_type, interval, model_id);
 }
