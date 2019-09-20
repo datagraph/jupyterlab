@@ -102,7 +102,6 @@ function create_line_chart(id, widget_type, interval, model_id) {
 
     var xhr = new XMLHttpRequest();
     xhr.withCredentials = true;
-    http_endpoint = '/proxy/hit/api';
     xhr.addEventListener('readystatechange', function() {
       if (this.readyState === 4) {
         var resp = JSON.parse(this.responseText);
