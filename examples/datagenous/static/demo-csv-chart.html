@@ -235,7 +235,7 @@ function predict_output_request(id, widget_type)
       execution_widgets.push(node);*/
       for (e in edges)
       {
-        if (edges[e].target == (chart_widget + "_left") )
+        if (edges[e].target == (chart_widget.id + "_left") )
         {
            model_widget = edges[e].source.substring(0, edges[e].source.indexOf('_'));
            var widget_type = null;
