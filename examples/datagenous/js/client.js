@@ -10,7 +10,11 @@ function http_request(endpoint, data, method, output_field) {
   xhr.addEventListener('readystatechange', function() {
     if (this.readyState === 4) {
       console.log(this.responseText);
-      output_field.val(JSON.parse(this.responseText));
+      if (output_field) {
+        output_field.val(JSON.parse(this.responseText));
+      } else {
+        console.log(this.responseText);
+      }
     }
   });
 
@@ -71,30 +75,8 @@ function setXY(widget_id, widget_type) {
     widget_id: widget_id,
     widget_type: widget_type
   });
-  var xhr = new XMLHttpRequest();
-  xhr.withCredentials = true;
 
-  xhr.addEventListener('readystatechange', function() {
-    if (this.readyState === 4) {
-      console.log(this.responseText);
-    }
-  });
-
-  xhr.open('POST', 'http://de8.dydra.com:5002/api/v1.0/widget/');
-  xhr.setRequestHeader('Content-Type', 'application/json');
-  xhr.setRequestHeader('User-Agent', 'PostmanRuntime/7.15.2');
-  xhr.setRequestHeader('Accept', '*/*');
-  xhr.setRequestHeader('Cache-Control', 'no-cache');
-  xhr.setRequestHeader(
-    'Postman-Token',
-    'edd60906-7bf1-496c-9831-f9e08508600b,c5a98ca1-ae9f-47ff-a257-8515d75491ba'
-  );
-  xhr.setRequestHeader('Host', 'de8.dydra.com:5002');
-  xhr.setRequestHeader('Accept-Encoding', 'gzip, deflate');
-  xhr.setRequestHeader('Connection', 'keep-alive');
-  xhr.setRequestHeader('cache-control', 'no-cache');
-
-  xhr.send(data);
+  http_request('/api/v1.0/widget/', data, 'POST', null);
 }
 
 function train_svm(widget_id, widget_type) {
@@ -111,30 +93,7 @@ function train_svm(widget_id, widget_type) {
     widget_id: widget_id,
     widget_type: widget_type
   });
-  var xhr = new XMLHttpRequest();
-  xhr.withCredentials = true;
-
-  xhr.addEventListener('readystatechange', function() {
-    if (this.readyState === 4) {
-      console.log(this.responseText);
-    }
-  });
-
-  xhr.open('POST', 'http://de8.dydra.com:5002/api/v1.0/widget/');
-  xhr.setRequestHeader('Content-Type', 'application/json');
-  xhr.setRequestHeader('User-Agent', 'PostmanRuntime/7.15.2');
-  xhr.setRequestHeader('Accept', '*/*');
-  xhr.setRequestHeader('Cache-Control', 'no-cache');
-  xhr.setRequestHeader(
-    'Postman-Token',
-    'edd60906-7bf1-496c-9831-f9e08508600b,c5a98ca1-ae9f-47ff-a257-8515d75491ba'
-  );
-  xhr.setRequestHeader('Host', 'de8.dydra.com:5002');
-  xhr.setRequestHeader('Accept-Encoding', 'gzip, deflate');
-  xhr.setRequestHeader('Connection', 'keep-alive');
-  xhr.setRequestHeader('cache-control', 'no-cache');
-
-  xhr.send(data);
+  http_request('/api/v1.0/widget/', data, 'POST', null);
 }
 
 function http_input(widget_id, widget_type) {
@@ -157,34 +116,5 @@ function http_input(widget_id, widget_type) {
     widget_id: widget_id,
     widget_type: widget_type
   });
-  var xhr = new XMLHttpRequest();
-  xhr.withCredentials = true;
-
-  xhr.addEventListener('readystatechange', function() {
-    if (this.readyState === 4) {
-      console.log(this.responseText);
-    }
-  });
-
-  xhr.open('POST', 'http://de8.dydra.com:5002/api/v1.0/widget/');
-  xhr.setRequestHeader('Content-Type', 'application/json');
-  xhr.setRequestHeader('User-Agent', 'PostmanRuntime/7.15.2');
-  xhr.setRequestHeader('Accept', '*/*');
-  xhr.setRequestHeader('Cache-Control', 'no-cache');
-  xhr.setRequestHeader(
-    'Postman-Token',
-    'edd60906-7bf1-496c-9831-f9e08508600b,c5a98ca1-ae9f-47ff-a257-8515d75491ba'
-  );
-  xhr.setRequestHeader('Host', 'de8.dydra.com:5002');
-  xhr.setRequestHeader('Accept-Encoding', 'gzip, deflate');
-  xhr.setRequestHeader('Connection', 'keep-alive');
-  xhr.setRequestHeader('cache-control', 'no-cache');
-
-  xhr.send(data);
-}
-
-function run_widget_csv(widget_id, command) {
-  console.log('Run request from: ' + widget_id);
-  console.log('Command: ' + command);
-  file_read_request(widget_id);
+  http_request('/api/v1.0/widget/', data, 'POST', null);
 }
