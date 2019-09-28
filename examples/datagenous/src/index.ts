@@ -30,10 +30,10 @@ import {
 } from '@jupyterlab/rendermime';
 import { PageConfig } from '@jupyterlab/coreutils';
 import { SetupCommands } from './commands';
-import { Comment } from './comment';
+import { Comment } from './Comment';
 import { SVM } from './SVM';
 import { XYSelector } from './XYSelector';
-import { CSVReader } from './csvreader';
+import { CSVReader } from './CSVReadereader';
 import { LineChart } from './LineChart';
 import { HTTPEndpoint } from './HTTPEndpoint';
 import { LinearRegression } from './LinearRegression';
