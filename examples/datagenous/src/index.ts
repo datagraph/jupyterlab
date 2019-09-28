@@ -33,7 +33,7 @@ import { SetupCommands } from './commands';
 import { Comment } from './Comment';
 import { SVM } from './SVM';
 import { XYSelector } from './XYSelector';
-import { CSVReader } from './CSVReadereader';
+import { CSVReader } from './CSVReader';
 import { LineChart } from './LineChart';
 import { HTTPEndpoint } from './HTTPEndpoint';
 import { LinearRegression } from './LinearRegression';
