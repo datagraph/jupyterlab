@@ -87,6 +87,10 @@ function createApp(manager: ServiceManager.IManager): void {
 }
 
 export function create_widget(id: string, widget_type: string) {
+  /* This function is attached to window object such that
+   * it can be called by client code
+   */
+
   if (widget_type == 'input/csv') {
     let csv = new CSVReader(id);
     csv.createInstance();

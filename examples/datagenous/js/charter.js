@@ -113,13 +113,8 @@ function create_line_chart(id, widget_type, interval, model_id) {
     });
 
     xhr.open('GET', http_endpoint);
-    xhr.setRequestHeader('User-Agent', 'PostmanRuntime/7.13.0');
     xhr.setRequestHeader('Accept', '*/*');
     xhr.setRequestHeader('Cache-Control', 'no-cache');
-    xhr.setRequestHeader(
-      'Postman-Token',
-      'd4d78eb9-4bd1-4f9e-91a6-7994b7735a0b,f2743424-12b7-4a0a-a570-02c36fb08fe2'
-    );
     xhr.setRequestHeader('Host', 'de8.dydra.com:5002');
     xhr.setRequestHeader('accept-encoding', 'gzip, deflate');
     xhr.setRequestHeader('Connection', 'keep-alive');
