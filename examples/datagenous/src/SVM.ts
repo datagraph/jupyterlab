@@ -51,7 +51,6 @@ export class SVM extends Widget {
     window.console.log('Creating SVM widget');
     // Get canvas
     let canvas = document.getElementById('graphContainer');
-    // First Menu
     Widget.attach(this, canvas);
     (window as any).eval('visualize()');
   }

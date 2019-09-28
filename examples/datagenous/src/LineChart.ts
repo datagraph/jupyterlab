@@ -56,7 +56,6 @@ export class LineChart extends Widget {
     window.console.log('Creating LineChart widget');
     // Get canvas
     let canvas = document.getElementById('graphContainer');
-    // First Menu
     Widget.attach(this, canvas);
     (window as any).eval('visualize()');
   }

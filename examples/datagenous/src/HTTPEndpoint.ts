@@ -61,7 +61,6 @@ export class HTTPEndpoint extends Widget {
     window.console.log('Creating HTTP endpoint widget');
     // Get canvas
     let canvas = document.getElementById('graphContainer');
-    // First Menu
     Widget.attach(this, canvas);
     (window as any).eval('visualize()');
   }

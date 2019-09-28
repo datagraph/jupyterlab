@@ -59,8 +59,6 @@ export class CSVReader extends Widget {
     window.console.log(' Creating a CSV reader ');
     // Get canvas
     let canvas = document.getElementById('graphContainer');
-
-    // First Menu
     Widget.attach(this, canvas);
 
     (window as any).eval('visualize()');

@@ -9,11 +9,11 @@ export class Comment extends Widget {
   type: string;
 
   constructor(widget_id: string) {
+    /* Constructor takes an optional id for reconstruction
+    of an existing canvas, otherwise a new id is assigned*/
     if (widget_id) {
       super({ node: Comment.createNode(widget_id) });
     } else {
-      /* Constructor takes an optional id for reconstruction
-      of an existing canvas, otherwise a new id is assigned*/
       super({ node: Comment.createNode(uuid()) });
     }
   }
@@ -42,17 +42,12 @@ export class Comment extends Widget {
     );
     return node_comment;
   }
-
   public createInstance(): void {
     let body = document.body;
-
     window.console.log(' Creating a comment');
     // Get canvas
     let canvas = document.getElementById('graphContainer');
-
-    // First Menu
     Widget.attach(this, canvas);
-
     (window as any).eval('visualize()');
   }
 }
