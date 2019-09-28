@@ -6,11 +6,15 @@ import { v4 as uuid } from 'uuid';
 
 export class Comment extends Widget {
   id: string;
+  type: string;
+
   constructor(widget_id: string) {
     if (widget_id) {
       super({ node: Comment.createNode(widget_id) });
     } else {
-      super({ node: Comment.createNode(widget_id) });
+      /* Constructor takes an optional id for reconstruction
+      of an existing canvas, otherwise a new id is assigned*/
+      super({ node: Comment.createNode(uuid()) });
     }
   }
 

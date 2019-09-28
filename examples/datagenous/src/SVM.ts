@@ -6,27 +6,16 @@ import { CustomMessage } from './CustomMessage';
 export class SVM extends Widget {
   id: string;
   // Classification, Regression
-  svm_type: string;
-  // Data source ids
-  children_ids: string[];
-  // Accepted children types
-  children_types: string[];
-  //
-  children_messages: string[];
-  //
-  widget_type: string;
-
+  type: string;
   // what parameters should be passed for Hyperparameter space
-  hyperparameter_json: string;
+  parameter_json: string;
 
   constructor(widget_id: string) {
     if (widget_id) {
       super({ node: SVM.createNode(widget_id) });
     } else {
-      super({ node: SVM.createNode(widget_id) });
+      super({ node: SVM.createNode(uuid()) });
     }
-    //super({ node: LinearRegression.createNode(uuid()) });
-    //this.children_types[0] = "tabular-data-source-xy";
   }
 
   static createNode(widget_id: string): HTMLElement {

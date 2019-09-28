@@ -5,19 +5,9 @@ import { CustomMessage } from './CustomMessage';
 
 export class XYSelector extends Widget {
   id: string;
-  // Classification, Regression
-  svm_type: string;
-  // Data source ids
-  children_ids: string[];
-  // Accepted children types
-  children_types: string[];
-  // to store children messages.
-  children_messages: string[];
-  // TabularDataSource, Classifier-SVM
-  widget_type: string;
-
-  // what parameters should be passed for Hyperparameter space
-  hyperparameter_json: string;
+  type: string;
+  // what parameters should be passed for widget execution
+  parameter_json: string;
 
   constructor(widget_id: string) {
     if (widget_id) {
@@ -25,8 +15,6 @@ export class XYSelector extends Widget {
     } else {
       super({ node: XYSelector.createNode(uuid()) });
     }
-
-    this.widget_type = 'tabular-data-source-xy';
   }
 
   static createNode(widget_id: string): HTMLElement {
@@ -75,7 +63,7 @@ export class XYSelector extends Widget {
     let msg = new CustomMessage(
       this.id,
       (<HTMLTextAreaElement>this.node.children[0]).value,
-      this.widget_type
+      this.type
     );
     MessageLoop.sendMessage(this.parent, msg);
   }

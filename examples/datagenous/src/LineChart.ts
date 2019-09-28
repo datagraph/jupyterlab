@@ -5,24 +5,19 @@ import { CustomMessage } from './CustomMessage';
 
 export class LineChart extends Widget {
   id: string;
+  type: string;
 
-  // Data source ids
-  children_ids: string[];
-  // Accepted children types
-  children_types: string[];
-  //
-  children_messages: string[];
-  //
-  widget_type: string;
-
-  // what parameters should be passed for Hyperparameter space
-  hyperparameter_json: string;
+  // what parameters should be passed for chart parameters
+  parameter_json: string;
 
   constructor(widget_id: string) {
-    // For ivans demo
-
-    //super({ node: LineChart.createNode(uuid()) });
-    super({ node: LineChart.createNode(widget_id) });
+    /* Constructor takes an optional id for reconstruction
+    of an existing canvas, otherwise a new id is assigned*/
+    if (widget_id) {
+      super({ node: LineChart.createNode(widget_id) });
+    } else {
+      super({ node: LineChart.createNode(uuid()) });
+    }
   }
 
   static createNode(widget_id: string): HTMLElement {

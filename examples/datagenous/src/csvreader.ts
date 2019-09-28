@@ -5,10 +5,21 @@ import { Widget } from '@phosphor/widgets';
 import { v4 as uuid } from 'uuid';
 
 export class CSVReader extends Widget {
+  // Each widget has a unique id - uuid4
   id: string;
-  constructor(widget_id: string) {
-    super({ node: CSVReader.createNode(widget_id) });
-    //this.id = uuid();
+  // Widget type
+  type: string;
+  // what parameters should be passed for CSV selection
+  parameter_json: string;
+
+  constructor(widget_id?: string) {
+    /* Constructor takes an optional id for reconstruction
+      of an existing canvas, otherwise a new id is assigned*/
+    if (widget_id) {
+      super({ node: CSVReader.createNode(widget_id) });
+    } else {
+      super({ node: CSVReader.createNode(uuid()) });
+    }
   }
 
   static createNode(widget_id: string): HTMLElement {

@@ -4,28 +4,21 @@ import { v4 as uuid } from 'uuid';
 import { CustomMessage } from './CustomMessage';
 
 export class LinearRegression extends Widget {
+  // Each widget has a unique id - uuid4
   id: string;
-
-  // Data source ids
-  children_ids: string[];
-  // Accepted children types
-  children_types: string[];
-  //
-  children_messages: string[];
-  //
-  widget_type: string;
-
+  // Widget type
+  type: string;
   // what parameters should be passed for Hyperparameter space
-  hyperparameter_json: string;
+  parameter_json: string;
 
-  constructor(widget_id: string) {
+  constructor(widget_id?: string) {
+    /* Constructor takes an optional id for reconstruction
+    of an existing canvas, otherwise a new id is assigned*/
     if (widget_id) {
       super({ node: LinearRegression.createNode(widget_id) });
     } else {
-      super({ node: LinearRegression.createNode(widget_id) });
+      super({ node: LinearRegression.createNode(uuid()) });
     }
-    //super({ node: LinearRegression.createNode(uuid()) });
-    //this.children_types[0] = "tabular-data-source-xy";
   }
 
   static createNode(widget_id: string): HTMLElement {
