@@ -1,5 +1,9 @@
 /* This file is the main file that enable data transmission
-between backend and frontend system */
+between backend and frontend system.
+Some methods such as http_request method are helpers
+while others such file_read_request_preview are for widget
+interaction */
+
 function http_request(endpoint, data, method, output_field) {
   var HOST = 'http://de8.dydra.com:5002/';
   var xhr = new XMLHttpRequest();
@@ -31,19 +35,27 @@ function http_request(endpoint, data, method, output_field) {
 }
 
 function file_read_request(widget_id, widget_type) {
+  /* As widget interaction method it needs to parse the
+   * values from DOM of the widget UI and needs to know
+   * where to output response
+   */
+
   console.log('Received file read request from widget:' + widget_id);
+  // Get the widget
   var x = $('#' + widget_id);
   // CSV readers have input as first field, continiuning with assumptions
   var input_field = x
     .children('.body')
     .children('#filename')
     .val();
-
+  // Backend is expected a set of variables from frontend according each
+  // widget type, that is where we are filling it in
   var data = JSON.stringify({
     filename: input_field,
     widget_id: widget_id,
     widget_type: widget_type
   });
+  // Where do we want to print output of this interaction
   var output_field = x.children('.body').children('textarea');
   http_request('/api/v1.0/widget/', data, 'POST', output_field);
 }
