@@ -82,7 +82,7 @@ li {
             "height":250,
             "elements": [
               {
-                "id":"filename",
+                "id":"dataset_name",
                 "value": "mnist",
                 "section":"body",
                 "type": "input"
@@ -90,16 +90,16 @@ li {
             ]
           },
           {
-            "id": "XY",
-            "type": "filter/xy",
+            "id": "ly1",
+            "type": "Tensorflow/Keras/Layer",
             "left": 550,
             "top": 250,
             "width" : 250,
             "height":150,
             "elements": [
               {
-                "id":"xy_input",
-                "value": "1:8,25:26",
+                "id":"layer_info",
+                "value": "Dense(32, input_shape=(784,))",
                 "section":"body",
                 "type": "input"
               }
@@ -107,89 +107,138 @@ li {
           },
 
           {
-            "id": "svm",
-            "type": "model/regression/svr",
+            "id": "ac1",
+            "type": "Tensorflow/Keras/Activation",
             "left": 850,
             "top": 600,
             "width" : 250,
             "height":200,
             "elements": [
               {
-                "id":"svm_options",
-                "value": "C:1.0 ",
+                "id":"activation_info",
+                "value": "relu",
                 "section":"body",
-                "type": "textarea"
+                "type": "input"
               }
             ]
           },
 
           {
-            "id": "linechart2",
-            "type": "linechart",
+            "id": "ly2",
+            "type": "Tensorflow/Keras/Layer",
             "left": 1250,
             "top": 550,
             "width" : 250,
             "height":250,
-            "elements": []
-          },
-          {
-            "id": "http1",
-            "type": "input/HTTPEndpoint",
-            "left": 150,
-            "top": 850,
-            "width" : 250,
-            "height":250,
-
             "elements": [
               {
-                "id":"httpendpoint1input",
-                "value": "http://de8.dydra.com:5002/proxy/hit/api",
-                "section":"body",
-                "type": "input"
-              },
-              {
-                "id":"httpendpoint1interval",
-                "value": "5 ",
+                "id":"layer_info",
+                "value": "Dense(32)",
                 "section":"body",
                 "type": "input"
               }
             ]
           },
           {
-            "id": "comment",
-            "type": "comment",
+            "id": "ac2",
+            "type": "Tensorflow/Keras/Activation",
             "left": 1550,
+            "top": 850,
+            "width" : 250,
+            "height":250,
+            "elements": [
+              {
+                "id":"activation_info",
+                "value": "relu",
+                "section":"body",
+                "type": "input"
+              }
+            ]
+          },
+          {
+            "id": "ly3",
+            "type": "Tensorflow/Keras/Layer",
+            "left": 1850,
             "top": 600,
             "width" : 350,
             "height":300,
-            "elements": []
+            "elements": [
+              {
+                "id":"layer_info",
+                "value": "Dense(10)",
+                "section":"body",
+                "type": "input"
+              }
+            ]
+          },
+          {
+            "id": "ac3",
+            "type": "Tensorflow/Keras/Activation",
+            "left": 2150,
+            "top": 850,
+            "width" : 250,
+            "height":250,
+            "elements": [
+              {
+                "id":"activation_info",
+                "value": "softmax",
+                "section":"body",
+                "type": "input"
+              }
+            ]
+          },
+          {
+            "id": "mdl",
+            "type": "Tensorflow/Keras/Model",
+            "left": 2150,
+            "top": 850,
+            "width" : 250,
+            "height":250,
+            "elements": [
+              {
+                "id":"model_info",
+                "value": " optimizer='rmsprop',loss='binary_crossentropy',  metrics=['accuracy']",
+                "section":"body",
+                "type": "input"
+              }
+            ]
           }
         ],
         "edges":[
           {
             "id": "edge_1",
-            "source": "stop_right",
-            "target": "XY_left"
+            "source": "ds_right",
+            "target": "ly1_left"
           },
           {
             "id": "edge_2",
-            "source": "XY_right",
-            "target": "lr_left"
+            "source": "ly1_right",
+            "target": "ac1_left"
           },
           {
             "id": "edge_3",
-            "source": "XY_right",
-            "target": "svm_left"
+            "source": "ac1_right",
+            "target": "ly2_left"
           },
           {
             "id": "edge_4",
-            "source": "svm_right",
-            "target": "linechart2_left"
+            "source": "ly2_right",
+            "target": "ac2_left"
           },
           {
             "id": "edge_7",
-            "source": "http1_right",
-            "target": "svm_left"
+            "source": "ac2_right",
+            "target": "ly3_left"
+          },
+          {
+            "id": "edge_8",
+            "source": "ly3_right",
+            "target": "ac3_left"
+          },
+          {
+            "id": "edge_9",
+            "source": "ac3_right",
+            "target": "mdl_left"
           }
 
         ],
