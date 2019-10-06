@@ -5,7 +5,7 @@ import { CustomMessage } from './CustomMessage';
 
 /* Demo dataset widget for different types of sklearn dataset */
 
-export class KerasActivation extends Widget {
+export class KerasOptimizer extends Widget {
   // Each widget has a unique id - uuid4
   id: string;
   // Widget type
