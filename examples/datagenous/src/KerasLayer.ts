@@ -50,4 +50,12 @@ export class KerasLayer extends Widget {
     );
     return node;
   }
+  public createInstance(): void {
+    let body = document.body;
+    window.console.log('Creating Keras Layer');
+    // Get canvas
+    let canvas = document.getElementById('graphContainer');
+    Widget.attach(this, canvas);
+    (window as any).eval('visualize()');
+  }
 }

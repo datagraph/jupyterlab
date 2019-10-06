@@ -17,9 +17,9 @@ export class KerasOptimizer extends Widget {
     /* Constructor takes an optional id for reconstruction
       of an existing canvas, otherwise a new id is assigned*/
     if (widget_id) {
-      super({ node: KerasActivation.createNode(widget_id) });
+      super({ node: KerasOptimizer.createNode(widget_id) });
     } else {
-      super({ node: KerasActivation.createNode(uuid()) });
+      super({ node: KerasOptimizer.createNode(uuid()) });
     }
   }
 
@@ -50,5 +50,13 @@ export class KerasOptimizer extends Widget {
       'get_window_position_state("' + widget_id + '")'
     );
     return node;
+  }
+  public createInstance(): void {
+    let body = document.body;
+    window.console.log('Creating Keras Optimizer');
+    // Get canvas
+    let canvas = document.getElementById('graphContainer');
+    Widget.attach(this, canvas);
+    (window as any).eval('visualize()');
   }
 }

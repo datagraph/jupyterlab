@@ -51,4 +51,12 @@ export class Dataset extends Widget {
     );
     return node;
   }
+  public createInstance(): void {
+    let body = document.body;
+    window.console.log('Creating Dataset');
+    // Get canvas
+    let canvas = document.getElementById('graphContainer');
+    Widget.attach(this, canvas);
+    (window as any).eval('visualize()');
+  }
 }
