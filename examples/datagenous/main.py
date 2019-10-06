@@ -133,7 +133,7 @@ def canvas_demo_5():
     return app.send_static_file('demo-csv-chart.html')
 
 @app.route('/canvas/demo/nn', methods=['GET'])
-def canvas_demo_5():
+def canvas_demo_6():
     """ Demo canvas Keras from dataset  """
     LOGGER.info("Starting test canvas - IP:" +  get_request_ip())
     return app.send_static_file('demo-nn.html')
