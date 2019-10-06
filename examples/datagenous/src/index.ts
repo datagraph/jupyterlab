@@ -37,6 +37,11 @@ import { CSVReader } from './CSVReader';
 import { LineChart } from './LineChart';
 import { HTTPEndpoint } from './HTTPEndpoint';
 import { LinearRegression } from './LinearRegression';
+import { Dataset } from './Dataset';
+import { KerasLayer } from './KerasLayer';
+import { KerasActivation } from './KerasActivation';
+import { KerasModel } from './KerasModel';
+import { KerasOptimizer } from './KerasOptimizer';
 
 // Let's enjoy reverse engineering phosphor js people's code
 function createCanvasMenu(): MenuBar {
@@ -112,6 +117,21 @@ export function create_widget(id: string, widget_type: string) {
   } else if (widget_type == 'input/HTTPEndpoint') {
     let http = new HTTPEndpoint(id);
     http.createInstance();
+  } else if (widget_type == 'input/Dataset') {
+    let dataset = new Dataset(id);
+    dataset.createInstance();
+  } else if (widget_type == 'Tensorflow/Keras/Layer') {
+    let keraslayer = new KerasLayer(id);
+    keraslayer.createInstance();
+  } else if (widget_type == 'Tensorflow/Keras/Activation') {
+    let kerasactivation = new KerasActivation(id);
+    kerasactivation.createInstance();
+  } else if (widget_type == 'Tensorflow/Keras/Optimizer') {
+    let kerasoptimizer = new KerasOptimizer(id);
+    kerasoptimizer.createInstance();
+  } else if (widget_type == 'Tensorflow/Keras/Model') {
+    let kerasmodel = new KerasModel(id);
+    kerasmodel.createInstance();
   }
 }
 //(window as any).create_widget = create_widget;
