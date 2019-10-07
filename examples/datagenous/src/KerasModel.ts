@@ -40,7 +40,11 @@ export class KerasModel extends Widget {
       '</div>' +
       '</div>' +
       '<div class="body">' +
-      '<input id = "model_info" type="text" name="model_info" placeholder="Model details description">' +
+      '<input id = ' +
+      widget_id +
+      '"_model_info" type="text" name=' +
+      widget_id +
+      '"_model_info" placeholder="Model details description">' +
       '</div>';
 
     node.setAttribute('class', 'window');

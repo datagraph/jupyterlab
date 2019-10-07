@@ -40,7 +40,11 @@ export class KerasLayer extends Widget {
       '</div>' +
       '</div>' +
       '<div class="body">' +
-      '<input id = "layer_info" type="text" name="layer_info" placeholder="Layer description">' +
+      '<input id =' +
+      widget_id +
+      ' "_layer_info" type="text" name=' +
+      widget_id +
+      '"_layer_info" placeholder="Layer description">' +
       '</div>';
 
     node.setAttribute('class', 'window');

@@ -117,7 +117,7 @@ export function create_widget(id: string, widget_type: string) {
   } else if (widget_type == 'input/HTTPEndpoint') {
     let http = new HTTPEndpoint(id);
     http.createInstance();
-  } else if (widget_type == 'input/Dataset') {
+  } else if (widget_type == 'input/dataset') {
     let dataset = new Dataset(id);
     dataset.createInstance();
   } else if (widget_type == 'Tensorflow/Keras/Layer') {
