@@ -74,16 +74,32 @@ li {
 
         "widgets": [
           {
-            "id": "ds",
-            "type": "input/Dataset",
-            "left": 250,
+            "id": "sq",
+            "type": "input/RDF/SPARQL",
+            "left": 150,
             "top": 250,
             "width" : 250,
             "height":250,
             "elements": [
               {
-                "id":"dataset_name",
-                "value": "mnist",
+                "id":"sq_SPARQL_query",
+                "value": "select *   where {  { graph ?g {?s ?p ?o} }  } limit 150",
+                "section":"body",
+                "type": "input"
+              }
+            ]
+          },
+          {
+            "id": "pr",
+            "type": "Filter/PredicateFilter",
+            "left": 400,
+            "top": 250,
+            "width" : 250,
+            "height":250,
+            "elements": [
+              {
+                "id":"pr_predicate_input",
+                "value": "sepal_length, sepal_width, petal_length, petal_width",
                 "section":"body",
                 "type": "input"
               }
@@ -92,7 +108,7 @@ li {
           {
             "id": "ly1",
             "type": "Tensorflow/Keras/Layer",
-            "left": 550,
+            "left": 600,
             "top": 250,
             "width" : 250,
             "height":150,
@@ -206,11 +222,6 @@ li {
         ],
         "edges":[
           {
-            "id": "edge_1",
-            "source": "ds_right",
-            "target": "ly1_left"
-          },
-          {
             "id": "edge_2",
             "source": "ly1_right",
             "target": "ac1_left"
@@ -239,6 +250,16 @@ li {
             "id": "edge_9",
             "source": "ac3_right",
             "target": "mdl_left"
+          },
+          {
+            "id": "edge_10",
+            "source": "sp_right",
+            "target": "pr_left"
+          },
+          {
+            "id": "edge_11",
+            "source": "pr_right",
+            "target": "ly1_left"
           }
 
         ],
@@ -277,7 +298,7 @@ function execute_widget(id, widget_type)
      setXY(id, widget_type);
 
   }
-   // Models, maybe merge them together ? 
+   // Models, maybe merge them together ?
    else if (widget_type == 'model/regression/linear') {
     train_model(id, widget_type)
   } else if (widget_type == 'model/regression/svr') {

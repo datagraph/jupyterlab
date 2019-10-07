@@ -42,6 +42,8 @@ import { KerasLayer } from './KerasLayer';
 import { KerasActivation } from './KerasActivation';
 import { KerasModel } from './KerasModel';
 import { KerasOptimizer } from './KerasOptimizer';
+import { SPARQL } from './SPARQL';
+import { PredicateFilter } from './PredicateFilter';
 
 // Let's enjoy reverse engineering phosphor js people's code
 function createCanvasMenu(): MenuBar {
@@ -132,6 +134,12 @@ export function create_widget(id: string, widget_type: string) {
   } else if (widget_type == 'Tensorflow/Keras/Model') {
     let kerasmodel = new KerasModel(id);
     kerasmodel.createInstance();
+  } else if (widget_type == 'input/RDF/SPARQL') {
+    let sparql = new SPARQL(id);
+    sparql.createInstance();
+  } else if (widget_type == 'Filter/PredicateFilter') {
+    let predicatefilter = new PredicateFilter(id);
+    predicatefilter.createInstance();
   }
 }
 //(window as any).create_widget = create_widget;
