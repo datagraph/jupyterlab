@@ -43,7 +43,7 @@ export class PredicateFilter extends Widget {
       '<div class="body">' +
       '<input id = "' +
       widget_id +
-      '_predicate_filter" type="text" name="' +
+      '_predicate_input" type="text" name="' +
       widget_id +
       '_predicate_input" placeholder="Predicates,as,inputs;output,outputs">' +
       '</div>';
