@@ -139,6 +139,12 @@ def canvas_demo_6():
     return app.send_static_file('demo-nn.html')
 
 
+@app.route('/canvas/demo/nn-rdf', methods=['GET'])
+def canvas_demo_7():
+    """ Demo canvas Keras from dataset  """
+    LOGGER.info("Starting test canvas - IP:" +  get_request_ip())
+    return app.send_static_file('demo-nn-rdf.html')
+
 
 
 @app.route('/canvas/<string:canvas_id>', methods=['GET'])
