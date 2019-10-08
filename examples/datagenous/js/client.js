@@ -59,6 +59,32 @@ function file_read_request(widget_id, widget_type) {
   var output_field = x.children('.body').children('textarea');
   http_request('/api/v1.0/widget/', data, 'POST', output_field);
 }
+function SPARQL_query(widget_id, widget_type) {
+  /* As widget interaction method it needs to parse the
+   * values from DOM of the widget UI and needs to know
+   * where to output response
+   */
+
+  console.log('Received sparql query request from widget:' + widget_id);
+  // Get the widget
+  var x = $('#' + widget_id);
+  // CSV readers have input as first field, continiuning with assumptions
+  var input_field = x
+    .children('.body')
+    .children('#' + widget_id + '_SPARQL_query')
+    .val();
+  // Backend is expected a set of variables from frontend according each
+  // widget type, that is where we are filling it in
+  var data = JSON.stringify({
+    query: input_field,
+    widget_id: widget_id,
+    widget_type: widget_type
+  });
+  // Where do we want to print output of this interaction
+  var output_field = x.children('.body').children('textarea');
+  http_request('/api/v1.0/widget/', data, 'POST', output_field);
+}
+
 function file_read_request_preview(widget_id, filetype) {
   console.log('Received file read request from widget:' + widget_id);
   var x = $('#' + widget_id);

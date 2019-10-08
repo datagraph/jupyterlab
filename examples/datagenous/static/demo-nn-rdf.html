@@ -90,22 +90,6 @@ li {
             ]
           },
           {
-            "id": "pr",
-            "type": "Filter/PredicateFilter",
-            "left": 320,
-            "top": 250,
-            "width" : 250,
-            "height":250,
-            "elements": [
-              {
-                "id":"pr_predicate_input",
-                "value": "sepal_length, sepal_width, petal_length, petal_width",
-                "section":"body",
-                "type": "input"
-              }
-            ]
-          },
-          {
             "id": "ly1",
             "type": "Tensorflow/Keras/Layer",
             "left": 610,
@@ -254,14 +238,8 @@ li {
           {
             "id": "edge_10",
             "source": "sq_right",
-            "target": "pr_left"
-          },
-          {
-            "id": "edge_11",
-            "source": "pr_right",
             "target": "ly1_left"
           }
-
         ],
         "nodes":[]
       }
