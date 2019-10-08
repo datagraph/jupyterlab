@@ -107,6 +107,23 @@ function train_svm(widget_id, widget_type) {
   });
   http_request('/api/v1.0/widget/', data, 'POST', null);
 }
+function train_nn(widget_id, widget_type, execution_interpretation) {
+  console.log('Train nn request from widget:' + widget_id);
+  var x = $('#' + widget_id);
+  // CSV readers have input as first field, continiuning with assumptions
+  var input_field = x
+    .children('.body')
+    .children('#mdl_model_info')
+    .val();
+
+  var data = JSON.stringify({
+    options: input_field,
+    widget_id: widget_id,
+    widget_type: widget_type,
+    execution_interpretation: execution_interpretation
+  });
+  http_request('/api/v1.0/widget/', data, 'POST', null);
+}
 
 function http_input(widget_id, widget_type) {
   console.log('Add HTTP request from widget:' + widget_id);
