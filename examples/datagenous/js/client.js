@@ -122,7 +122,7 @@ function train_nn(widget_id, widget_type, execution_interpretation) {
     widget_type: widget_type,
     execution_interpretation: execution_interpretation
   });
-  http_request('/api/v1.0/widget/', data, 'POST', null);
+  http_request('/demo/api/v1.0/train_nn', data, 'POST', null);
 }
 
 function http_input(widget_id, widget_type) {
