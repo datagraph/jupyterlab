@@ -43,9 +43,9 @@ export class KerasActivation extends Widget {
       '<div class="body">' +
       '<input id = ' +
       widget_id +
-      '_activation_info" type="text" name=' +
+      '_activation_info type="text" name=' +
       widget_id +
-      '_activation_info" placeholder="Activation function description">' +
+      '_activation_info placeholder="Activation function description">' +
       '</div>';
 
     node.setAttribute('class', 'window');
