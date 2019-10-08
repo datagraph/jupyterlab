@@ -285,6 +285,12 @@ function execute_widget(id, widget_type)
    else if (widget_type == 'Tensorflow/Keras/Model') {
       train_model(id, widget_type)
   }
+  else if (widget_type == 'Tensorflow/Keras/Layer') {
+     keras_layer(id, widget_type)
+ }
+ else if (widget_type == 'Tensorflow/Keras/Activation') {
+    keras_activation(id, widget_type)
+}
   else if (widget_type == 'comment') {
 
   } else if (widget_type == 'input/HTTPEndpoint') {
@@ -293,8 +299,6 @@ function execute_widget(id, widget_type)
   else if (widget_type == 'input/RDF/SPARQL') {
     SPARQL_query(id, widget_type)
   }
-
-
 }
 function predict_output_request(id, widget_type)
 {
