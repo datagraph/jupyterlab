@@ -57,7 +57,7 @@ function file_read_request(widget_id, widget_type) {
   });
   // Where do we want to print output of this interaction
   var output_field = x.children('.body').children('textarea');
-  http_request('/api/v1.0/widget/', data, 'POST', output_field);
+  http_request('api/v1.0/widget/', data, 'POST', output_field);
 }
 function SPARQL_query(widget_id, widget_type) {
   /* As widget interaction method it needs to parse the
@@ -82,7 +82,7 @@ function SPARQL_query(widget_id, widget_type) {
   });
   // Where do we want to print output of this interaction
   var output_field = x.children('.body').children('textarea');
-  http_request('/api/v1.0/widget/', data, 'POST', output_field);
+  http_request('api/v1.0/widget/', data, 'POST', output_field);
 }
 
 function file_read_request_preview(widget_id, filetype) {
@@ -114,7 +114,7 @@ function setXY(widget_id, widget_type) {
     widget_type: widget_type
   });
 
-  http_request('/api/v1.0/widget/', data, 'POST', null);
+  http_request('api/v1.0/widget/', data, 'POST', null);
 }
 
 function train_svm(widget_id, widget_type) {
@@ -131,7 +131,7 @@ function train_svm(widget_id, widget_type) {
     widget_id: widget_id,
     widget_type: widget_type
   });
-  http_request('/api/v1.0/widget/', data, 'POST', null);
+  http_request('api/v1.0/widget/', data, 'POST', null);
 }
 function train_nn(widget_id, widget_type, execution_interpretation) {
   console.log('Train nn request from widget:' + widget_id);
@@ -148,7 +148,7 @@ function train_nn(widget_id, widget_type, execution_interpretation) {
     widget_type: widget_type,
     execution_interpretation: execution_interpretation
   });
-  http_request('/demo/api/v1.0/train_nn', data, 'POST', null);
+  http_request('demo/api/v1.0/train_nn', data, 'POST', null);
 }
 
 function http_input(widget_id, widget_type) {
@@ -171,5 +171,5 @@ function http_input(widget_id, widget_type) {
     widget_id: widget_id,
     widget_type: widget_type
   });
-  http_request('/api/v1.0/widget/', data, 'POST', null);
+  http_request('api/v1.0/widget/', data, 'POST', null);
 }
