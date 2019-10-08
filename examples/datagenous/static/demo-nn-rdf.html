@@ -83,7 +83,7 @@ li {
             "elements": [
               {
                 "id":"sq_SPARQL_query",
-                "value": "select *   where {  { graph ?g {?s ?p ?o} }  } limit 150",
+                "value": "select *   where {  { graph ?g {?s ?p ?o} }  } limit 750",
                 "section":"body",
                 "type": "input"
               }
@@ -441,7 +441,7 @@ function train_model(id, widget_type)
       train_svm_api(id, widget_type);
   }
   else if (widget_type == 'Tensorflow/Keras/Model') {
-
+      train_nn(id, widget_type, execution_interpretation)
   }
 
  //get_list_of_widgets_connected(id, widget_chain_id)
