@@ -290,6 +290,9 @@ function execute_widget(id, widget_type)
   } else if (widget_type == 'input/HTTPEndpoint') {
     http_input(id, widget_type)
   }
+  else if (widget_type == 'input/RDF/SPARQL') {
+    SPARQL_query(id, widget_type)
+  }
 
 
 }
