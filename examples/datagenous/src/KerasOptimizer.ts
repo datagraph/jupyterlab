@@ -41,11 +41,11 @@ export class KerasOptimizer extends Widget {
       '</div>' +
       '</div>' +
       '<div class="body">' +
-      '<input id = ' +
+      '<input id =' +
       widget_id +
-      '"_optimizer_info" type="text" name=' +
+      '_optimizer_info" type="text" name=' +
       widget_id +
-      '"_optimizer_info" placeholder="Optimizer description">' +
+      '_optimizer_info" placeholder="Optimizer description">' +
       '</div>';
 
     node.setAttribute('class', 'window');
